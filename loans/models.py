@@ -4,33 +4,28 @@ from django.db import models
 
 class Customers(models.Model):
   name = models.CharField(max_length=50)
+  customerType = models.CharField(max_length=20)
+  creditRating = models.IntegerField()
 
 class Loans(models.Model):
-  category = models.CharField(max_length=10)
+  interestCategory = models.CharField(max_length=10)
   principal = models.DecimalField(max_digits=15, decimal_places=2)
+  originalMonths = models.IntegerField()
+  elapsedMonths = models.IntegerField()
+  monthlyInstalment = models.DecimalField(max_digits=15, decimal_places=2)
   interestRate = models.DecimalField(max_digits=6, decimal_places=2)
-  amountPaid = models.DecimalField(max_digits=15, decimal_places=2)
+  prepaymentPenaltyRate = models.DecimalField(max_digits=6, decimal_places=2)
+  outstandingLoanBalance = models.DecimalField(max_digits=15, decimal_places=2)
   dateTaken = models.DateTimeField(auto_now_add=True)
+  isSecured = models.BooleanField()
+  security = models.CharField(max_length=100)
   customer = models.ForeignKey(Customers)
 
-class FloatingLoans(Loans):
-  minDate = models.DateTimeField()
-  maxDate = models.DateTimeField()
-
-class FixedLoans(Loans):
-  lastInstallmentDate = models.DateTimeField()
-
-class Installments(models.Model):
+class PaidInstallments(models.Model):
   amount = models.DecimalField(max_digits=15, decimal_places=2)
   loan = models.ForeignKey(Loans)
-
-class PaidInstallments(Installments):
   datePaid = models.DateTimeField()
   merchantUsed = models.CharField(max_length=20)
-
-class DueInstallments(Installments):
-  startDate =  models.DateTimeField()
-  endDate = models.DateTimeField()
 
 class Applications(models.Model):
   customer = models.ForeignKey(Customers)
