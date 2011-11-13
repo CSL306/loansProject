@@ -2,26 +2,32 @@ from django.db import models
 
 # Create your models here.
 
-class Customers(models.Model):
-  accountNumber = models.IntegerField()
+class Customer(models.Model):
   name = models.CharField(max_length=50)
+  accountNumber = models.IntegerField()
   customerType = models.CharField(max_length=20)
   creditRating = models.IntegerField()
 
-class Loans(models.Model):
-  interestCategory = models.CharField(max_length=10)
+class Loan(models.Model):
+  name = models.CharField(max_length=50)
   principal = models.DecimalField(max_digits=15, decimal_places=2)
   originalMonths = models.IntegerField()
-  elapsedMonths = models.IntegerField()
-  monthlyInstalment = models.DecimalField(max_digits=15, decimal_places=2)
-  interestRate = models.DecimalField(max_digits=6, decimal_places=2) # This is annual interest rate in percentage.
-  prepaymentPenaltyRate = models.DecimalField(max_digits=6, decimal_places=2)
-  outstandingLoanBalance = models.DecimalField(max_digits=15, decimal_places=2)
+  interestCategory = models.CharField(max_length=10)
+  loanType = models.CharField(max_length=100) # of the form "Personal - Car", etc
   dateTaken = models.DateTimeField(auto_now_add=True)
   isSecured = models.BooleanField()
   security = models.CharField(max_length=100)
-  customer = models.ForeignKey(Customers)
+  customer = models.ForeignKey(Customer)
   
+class ActiveLoan(Loan):
+  expectedDateOfTermination = models.DateTimeField()
+  elapsedMonths = models.IntegerField()
+  monthlyInstallment = models.DecimalField(max_digits=15, decimal_places=2)
+  interestRate = models.DecimalField(max_digits=6, decimal_places=2) # This is annual interest rate in percentage.
+  prepaymentPenaltyRate = models.DecimalField(max_digits=6, decimal_places=2)
+  outstandingLoanBalance = models.DecimalField(max_digits=15, decimal_places=2)
+  nextInstallmentDueDate = models.DateTimeField()
+ 
   def computeMonthlyInstalment(self):
     monthlyInterestRate = self.interestRate/(100*12)
     return (self.principal * monthlyInterestRate * (1 + monthlyInterestRate)**(self.originalMonths))/((1 + monthlyInterestRate)**(self.originalMonths) - 1)
@@ -33,25 +39,44 @@ class Loans(models.Model):
   def save(self, *args, **kwargs):
     self.monthlyInstalment = self.computeMonthlyInstalment()
     self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
-    super(Loans, self).save(*args, **kwargs)
+    super(Loan, self).save(*args, **kwargs)
 
+class CompletedLoan(Loan):
+  dateOfCompletion = models.DateTimeField()
+  totalAmountPaid = models.DecimalField(max_digits=15, decimal_places=2)
+  averageInterestRate = models.DecimalField(max_digits=6, decimal_places=2)
 
-class PaidInstallments(models.Model):
+class Payment(models.Model):
   amount = models.DecimalField(max_digits=15, decimal_places=2)
-  loan = models.ForeignKey(Loans)
-  datePaid = models.DateTimeField()
+  loan = models.ForeignKey(Loan)
+  paymentType = models.CharField(max_length=20) #prepayment/installment
+  datePaid = models.DateTimeField(auto_now_add=True)
   merchantUsed = models.CharField(max_length=20)
+  
+class OverdueInstallment(models.Model):
+  amount = models.DecimalField(max_digits=15, decimal_places=2)
+  dueDate = models.DateTimeField()
 
-class Applications(models.Model):
-  customer = models.ForeignKey(Customers)
-  loan = models.ForeignKey(Loans)
+class Application(models.Model):
+  name = models.CharField(max_length=50)
+  loanType = models.CharField(max_length=100) # of the form "Personal - Car", etc
+  amountAppliedFor = models.DecimalField(max_digits=15, decimal_places=2)
   dateApplied = models.DateTimeField(auto_now_add=True)
-  details = models.TextField()
+  customer = models.ForeignKey(Customer)
+  
+class AlottedApplication(Application):
+  amountAlloted = models.DecimalField(max_digits=15, decimal_places=2)
+  interestCategory = models.CharField(max_length=10)
+  interestRate = models.DecimalField(max_digits=6, decimal_places=2) # This is annual interest rate in percentage.
+  dateOfAllotment = models.DateTimeField()
+  loan = models.ForeignKey(Loan)
+  
+class ActiveApplication(Application):
   status = models.CharField(max_length=20)
   remark = models.TextField()
 
-class SupportTickets(models.Model):
-  loan = models.ForeignKey(Loans)
+class SupportTicket(models.Model):
+  loan = models.ForeignKey(Loan)
   complaintType = models.CharField(max_length=20)
   complaintMessage = models.TextField()
 

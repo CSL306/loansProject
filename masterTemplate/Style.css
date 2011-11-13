@@ -1,0 +1,164 @@
+#sidebar{
+	width:250px;
+	background:#DBDBDB;
+	position:fixed;
+	height:1500px;
+	//border:1px solid black;
+	margin-left:-10px;
+	margin-top:150px;
+}
+body{
+background-attachment:fixed;
+background-image:url("Back.jpg");
+}
+#topbar{
+	width:1280px;
+	height:149px;
+	
+	background:#DBDBDB;
+	margin-top:-8px;
+	padding-top:10px;
+	margin-left:-8px;
+	position:fixed;
+}
+#banner{
+	position:absolute;
+	top:15px;
+	left:305px;
+	z-index:1;
+	
+}
+#top_button{
+display: inline-block;
+//padding: 3px 15px;
+padding-top:30px;
+-webkit-border-radius: 18px;
+background: -moz-linear-gradient(top, #2F2727, #1a82f7);
+ background-image:-webkit-gradient(linear,left bottom,left top,color-stop(0.32,#2F2727),color-stop(0.66,#1a82f7));
+  /* chrome 10+, safari 5.1+ */
+  background-image:-webkit-linear-gradient(#3F2727,#1a82f7);
+   background-image:-webkit-linear-gradient(#3F2727,#1a82f7);
+  /* firefox; multiple color stops */
+  background-image:-moz-linear-gradient(top,#3F2727,#1a82f7);
+  /* ie 6+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3F2727', endColorstr='#1a82f7');
+  /* ie8 + */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#3F2727', endColorstr='#1a82f7')";
+  /* ie10 */
+  background-image: -ms-linear-gradient(#3F2727,#1a82f7);
+  /* opera 11.1 */
+  background-image: -o-linear-gradient(#3F2727,#1a82f7);
+  /* The "standard" */
+  background-image: linear-gradient(#3F2727,#1a82f7);
+-moz-border-radius: 18px;
+border-radius: 18px;
+width:200px;
+height:91px;
+text-align:center;
+font: 26px "Lucida Grande", Sans-Serif;
+background-color: #B6D3F4;
+//background-image: -webkit-gradient(linear, left top, left bottom, from(#b6d3f4), to(#5483b8)) !important;
+//background-image: -webkit-linear-gradient(top, #b6d3f4, #5483b8) !important;
+//background-image: -moz-linear-gradient(top, #b6d3f4, #5483b8) !important;
+//background-image: -ms-linear-gradient(top, #b6d3f4, #5483b8) !important;
+//background-image: -o-linear-gradient(top, #b6d3f4, #5483b8) !important;
+color: white !important;
+box-shadow: inset 0 1px 1px white, 0 3px 3px rgba(0,0,0,0.6);
+border: 1px solid #9AC9FF !important;
+font-weight: 600;
+text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+text-decoration: none;
+//margin: 0;
+position: absolute;
+top:5px;
+left:20px;
+z-index:1;
+}
+
+#top_button:hover{
+background: -moz-linear-gradient(top, #1a82f7, #2F2727);
+background-image:-webkit-gradient(linear,left bottom,left top,color-stop(0.32,#1a82f7),color-stop(0.66,#2F2727));
+  /* chrome 10+, safari 5.1+ */
+  background-image:-webkit-linear-gradient(#1a82f7,#3F2727);
+   background-image:-webkit-linear-gradient(#1a82f7,#3F2727);
+  /* firefox; multiple color stops */
+  background-image:-moz-linear-gradient(top,#1a82f7,#3F2727);
+  /* ie 6+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1a82f7', endColorstr='#3F2727');
+  /* ie8 + */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#1a82f7', endColorstr='#3F2727')";
+  /* ie10 */
+  background-image: -ms-linear-gradient(#1a82f7,#3F2727);
+  /* opera 11.1 */
+  background-image: -o-linear-gradient(#1a82f7, #3F2727);
+  /* The "standard" */
+  background-image: linear-gradient(#1a82f7,#3F2727);
+}
+		
+#but_img1{
+	border-radius:10px;
+
+}
+#but_img2{
+	margin-top:20px;
+	border-radius:10px;
+
+}
+#button1{border-radius:10px;margin-left:2.5px;font-size:30px;
+background:url("Button.png");
+margin-top:0px;
+padding-top:21px;
+font-family:Myriad Pro;
+	height:59px;
+	text-align:center;
+	width:245px;
+}
+
+#button1:hover{
+background:url("Button_1.png");
+
+}
+
+#button2{border-radius:10px;margin-left:2.5px;font-size:30px;
+background:url("Button.png");
+margin-top:20px;
+padding-top:21px;
+font-family:Myriad Pro;
+	text-align:center;
+	height:59px;
+	width:245px;
+}
+
+#button2:hover{
+background:url("Button_1.png");
+
+}
+
+#side_button_1{padding-left:2.5px;
+	color:#FFFFFF;
+	text-decoration:none;
+}
+#side_button_2{padding-left:2.5px;
+	color:#FFFFFF;
+	text-decoration:none;
+}
+#side_button_3{padding-left:2.5px;
+	color:#FFFFFF;
+	text-decoration:none;
+}
+#side_button_4{padding-left:2.5px;
+	color:#FFFFFF;
+	text-decoration:none;
+}
+#apply_button
+{
+	position:fixed;
+}
+
+#content
+{
+	position:absolute;
+	left:276px;
+	top:180px;
+	z-index:-1;
+}
