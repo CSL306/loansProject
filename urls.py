@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from loansProject.views import home
+from loansProject.views import *
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -17,10 +17,10 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     
     (r'^home/$', home),
+    (r'^dueInstallments/$', dueInstallments),
 )
 """
     (r'^applyForLoan/$', applyForLoan),
-    (r'^dueInstallments/$', dueInstallments),
     (r'^allLoans/$', allLoans),
     (r'^loanDetails/$', loanDetails),
     (r'^allApplications/$', allApplications),

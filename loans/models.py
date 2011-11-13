@@ -7,6 +7,9 @@ class Customer(models.Model):
   accountNumber = models.IntegerField()
   customerType = models.CharField(max_length=20)
   creditRating = models.IntegerField()
+  
+  def __unicode__(self):
+    return u'%s %s' % (self.accountNumber, self.name)
 
 class Loan(models.Model):
   name = models.CharField(max_length=50)
@@ -25,6 +28,9 @@ class Loan(models.Model):
     else:
       self.isSecured = True
     super(Loan, self).save(*args, **kwargs)
+  
+  def __unicode__(self):
+    return u'%s' % (self.name)
   
 class ActiveLoan(Loan):
   expectedDateOfTermination = models.DateTimeField()
@@ -63,6 +69,10 @@ class Payment(models.Model):
 class OverdueInstallment(models.Model):
   amount = models.DecimalField(max_digits=15, decimal_places=2)
   dueDate = models.DateTimeField()
+  loan = models.ForeignKey(Loan)
+
+  def __unicode__(self):
+    return u'%s' % (self.loan)
 
 class Application(models.Model):
   name = models.CharField(max_length=50)
