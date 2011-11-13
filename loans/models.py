@@ -12,12 +12,19 @@ class Loan(models.Model):
   name = models.CharField(max_length=50)
   principal = models.DecimalField(max_digits=15, decimal_places=2)
   originalMonths = models.IntegerField()
-  interestCategory = models.CharField(max_length=10)
+  interestCategory = models.CharField(max_length=10) # Fixed or Floating
   loanType = models.CharField(max_length=100) # of the form "Personal - Car", etc
   dateTaken = models.DateTimeField(auto_now_add=True)
-  isSecured = models.BooleanField()
-  security = models.CharField(max_length=100)
+  isSecured = models.BooleanField(blank=True)
+  security = models.CharField(max_length=100, blank=True)
   customer = models.ForeignKey(Customer)
+
+  def save(self, *args, **kwargs):
+    if self.security == False:
+      self.isSecured = False
+    else:
+      self.isSecured = True
+    super(Loan, self).save(*args, **kwargs)
   
 class ActiveLoan(Loan):
   expectedDateOfTermination = models.DateTimeField()
@@ -28,7 +35,7 @@ class ActiveLoan(Loan):
   outstandingLoanBalance = models.DecimalField(max_digits=15, decimal_places=2)
   nextInstallmentDueDate = models.DateTimeField()
  
-  def computeMonthlyInstalment(self):
+  def computeMonthlyInstallment(self):
     monthlyInterestRate = self.interestRate/(100*12)
     return (self.principal * monthlyInterestRate * (1 + monthlyInterestRate)**(self.originalMonths))/((1 + monthlyInterestRate)**(self.originalMonths) - 1)
 
@@ -37,9 +44,9 @@ class ActiveLoan(Loan):
     return self.principal * ((1+monthlyInterestRate)**(self.originalMonths) - (1 + monthlyInterestRate)**(self.elapsedMonths))/((1 + monthlyInterestRate)**(self.originalMonths) - 1)
 
   def save(self, *args, **kwargs):
-    self.monthlyInstalment = self.computeMonthlyInstalment()
+    self.monthlyInstallment = self.computeMonthlyInstallment()
     self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
-    super(Loan, self).save(*args, **kwargs)
+    super(ActiveLoan, self).save(*args, **kwargs)
 
 class CompletedLoan(Loan):
   dateOfCompletion = models.DateTimeField()
@@ -61,7 +68,8 @@ class Application(models.Model):
   name = models.CharField(max_length=50)
   loanType = models.CharField(max_length=100) # of the form "Personal - Car", etc
   amountAppliedFor = models.DecimalField(max_digits=15, decimal_places=2)
-  dateApplied = models.DateTimeField(auto_now_add=True)
+  dateApplied = models.DateTimeField(auto_now_add=True)  
+  security = models.CharField(max_length=100, blank=True)
   customer = models.ForeignKey(Customer)
   
 class AlottedApplication(Application):
@@ -76,11 +84,11 @@ class ActiveApplication(Application):
   remark = models.TextField()
 
 class SupportTicket(models.Model):
-  loan = models.ForeignKey(Loan)
+  loan = models.ForeignKey(Loan, blank=True, null=True)
   complaintType = models.CharField(max_length=20)
   complaintMessage = models.TextField()
 
-#class Merchants(models.Model):
+#class Merchant(models.Model):
 
 
 #class IdentityModule(models.Model):
