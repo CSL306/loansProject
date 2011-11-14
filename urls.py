@@ -19,6 +19,8 @@ urlpatterns = patterns('',
     (r'^home/$', home),
     (r'^dueInstallments/$', dueInstallments),
     (r'^allApplications/$', allApplications),
+    (r'^allApplications/(archive)/(\d+)/$', cancelOrArchive),
+    (r'^allApplications/(cancel)/(\d+)/$', cancelOrArchive),
 )
 """
     (r'^applyForLoan/$', applyForLoan),

@@ -1,12 +1,12 @@
 <ol>
 {% for application in processedApplications %}
-    <li>{{ application }}</li>
+    <li>{{ application }} <a href = "/allApplications/archive/{{application.id}}">Archive</a></li>
 {% endfor %}
 </ol>
 
 <ol>
 {% for application in underProcessingApplications %}
-    <li>{{ application }}</li>
+    <li>{{ application }} <a href = "/allApplications/cancel/{{application.id}}">Cancel & Archive</a></li>
 {% endfor %}
 </ol>
 

@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Template, Context
 from django.template.loader import get_template
 from loans.models import *
@@ -8,6 +8,7 @@ def home(request):
   c = Context(locals())
   html = t.render(c)
   return HttpResponse(html)
+
 
 def dueInstallments(request):
   # View for displaying all the installments which are due.
@@ -27,8 +28,12 @@ def dueInstallments(request):
   for activeLoan in activeLoanList:
     ois = OverdueInstallment.objects.filter(loan=activeLoan)
     for oi in ois:
-      overdueInstallments.append({'amount':oi.amount, 'dueDate':oi.dueDate, 'loan':oi.loan_id})
-    di = {'amount':activeLoan.monthlyInstallment, 'dueDate':activeLoan.nextInstallmentDueDate, 'loan':activeLoan.id}
+      overdueInstallments.append({'amount':oi.amount,
+                                  'dueDate':oi.dueDate,
+                                  'loan':oi.loan_id})
+    di = {'amount':activeLoan.monthlyInstallment,
+          'dueDate':activeLoan.nextInstallmentDueDate,
+          'loan':activeLoan.id}
     dueInstallments.append(di)
 
   def getDueDate(installment):
@@ -37,7 +42,8 @@ def dueInstallments(request):
   dueInstallments = sorted(dueInstallments, key=getDueDate)
 
   t = get_template('dueInstallments.html')
-  c = Context({'overdueInstallments':overdueInstallments, 'dueInstallments':dueInstallments})
+  c = Context({'overdueInstallments':overdueInstallments,
+               'dueInstallments':dueInstallments})
   html = t.render(c)
   return HttpResponse(html)
 
@@ -50,29 +56,69 @@ def allApplications(request):
   # customerID =
 
   # Get a list of all Applications associated with that Customer.
+  # Sort them in three categories.
   applicationList = Application.objects.filter(customer=2)
 
   processedApplications = []
   underProcessingApplications = []
   archivedApplications = []
   for application in applicationList:
+
     if application.isArchived == False:
+
       if application.status == "Active":
-        underProcessingApplications.append({'name':application.name, 'loanType':application.loanType, 'amountAppliedFor':application.amountAppliedFor, 'dateApplied':application.dateApplied, 'status':application.status, 'remark':application.remark})
+        underProcessingApplications.append({'id':application.id,
+                                            'name':application.name,
+                                            'loanType':application.loanType,
+                                            'amountAppliedFor':application.amountAppliedFor,
+                                            'dateApplied':application.dateApplied,
+                                            'status':application.status,
+                                            'remark':application.remark})
       elif application.status == "Allotted" or application.status == "Rejected":
-        processedApplications.append({'name':application.name, 'loanType':application.loanType, 'status':application.status, 'amountAllotted':application.amountAllotted, 'dateOfAllotment':application.dateOfAllotment, 'interestCategory':application.interestCategory, 'interestRate':application.interestRate})
+        processedApplications.append({'id':application.id,
+                                      'name':application.name,
+                                      'loanType':application.loanType,
+                                      'status':application.status,
+                                      'amountAllotted':application.amountAllotted,
+                                      'dateOfAllotment':application.dateOfAllotment,
+                                      'interestCategory':application.interestCategory,
+                                      'interestRate':application.interestRate})
+
     else:
-      archivedApplications.append({'name':application.name, 'loanType':application.loanType, 'status':application.status, 'amountAllotted':application.amountAllotted, 'dateOfAllotment':application.dateOfAllotment, 'interestCategory':application.interestCategory, 'interestRate':application.interestRate, 'amountAppliedFor':application.amountAppliedFor, 'dateApplied':application.dateApplied, 'remark':application.remark})
+      archivedApplications.append({'id':application.id,
+                                   'name':application.name,
+                                   'loanType':application.loanType,
+                                   'status':application.status,
+                                   'amountAllotted':application.amountAllotted,
+                                   'dateOfAllotment':application.dateOfAllotment,
+                                   'interestCategory':application.interestCategory,
+                                   'interestRate':application.interestRate,
+                                   'amountAppliedFor':application.amountAppliedFor,
+                                   'dateApplied':application.dateApplied,
+                                   'remark':application.remark})
 
   t = get_template('allApplications.html')
-  c = Context({'processedApplications':processedApplications, 'underProcessingApplications':underProcessingApplications, 'archivedApplications':archivedApplications})
+  c = Context({'processedApplications':processedApplications,
+               'underProcessingApplications':underProcessingApplications,
+               'archivedApplications':archivedApplications})
   html = t.render(c)
   return HttpResponse(html)
+
+
+def cancelOrArchive(request, cancelOrArchive, applicationID):
+  # Authenticate Customer (TBD)
+  # customerID =
+  if cancelOrArchive=="cancel":
+    Application.objects.filter(id=applicationID).update(status="Cancelled", isArchived="True")
+  elif cancelOrArchive=="archive":
+    Application.objects.filter(id=applicationID).update(isArchived="True")
+  return HttpResponseRedirect("/allApplications/")
 
 
 """
 def applyForLoan(request):
   # View for applying for a new loan.
+
 
 def allLoans(request):
   # View for displaying all the loans taken by the customer.
@@ -80,17 +126,22 @@ def allLoans(request):
   # Provide options for displaying them in different orders.
   # When a customer clicks on a loan, it takes them to a page which shows the details about that loan.
 
+
 def loanDetails(reques):
   # View for displaying all the details about a single loan.
+
 
 def applicationDetails(request):
   # View for displaying all the details about a single applicaiton.
 
+
 def paymentHistory(request):
   # View for displaying the payment history.
 
+
 def payNow(request):
   # View for paying an installment.
+
 
 def support(request):
   # View for filing a support request.
