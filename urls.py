@@ -18,12 +18,12 @@ urlpatterns = patterns('',
     
     (r'^home/$', home),
     (r'^dueInstallments/$', dueInstallments),
+    (r'^allApplications/$', allApplications),
 )
 """
     (r'^applyForLoan/$', applyForLoan),
     (r'^allLoans/$', allLoans),
     (r'^loanDetails/$', loanDetails),
-    (r'^allApplications/$', allApplications),
     (r'^applicationDetails/$', applicationDetails),
     (r'^paymentHistory/$', paymentHistory),
     (r'^payNow/$', payNow),

@@ -7,7 +7,7 @@ class Customer(models.Model):
   accountNumber = models.IntegerField()
   customerType = models.CharField(max_length=20)
   creditRating = models.IntegerField()
-  
+
   def __unicode__(self):
     return u'%s %s' % (self.accountNumber, self.name)
 
@@ -28,10 +28,10 @@ class Loan(models.Model):
     else:
       self.isSecured = True
     super(Loan, self).save(*args, **kwargs)
-  
+
   def __unicode__(self):
     return u'%s' % (self.name)
-  
+
 class ActiveLoan(Loan):
   expectedDateOfTermination = models.DateTimeField()
   elapsedMonths = models.IntegerField()
@@ -40,7 +40,7 @@ class ActiveLoan(Loan):
   prepaymentPenaltyRate = models.DecimalField(max_digits=6, decimal_places=2)
   outstandingLoanBalance = models.DecimalField(max_digits=15, decimal_places=2)
   nextInstallmentDueDate = models.DateTimeField()
- 
+
   def computeMonthlyInstallment(self):
     monthlyInterestRate = self.interestRate/(100*12)
     return (self.principal * monthlyInterestRate * (1 + monthlyInterestRate)**(self.originalMonths))/((1 + monthlyInterestRate)**(self.originalMonths) - 1)
@@ -65,7 +65,7 @@ class Payment(models.Model):
   paymentType = models.CharField(max_length=20) #prepayment/installment
   datePaid = models.DateTimeField(auto_now_add=True)
   merchantUsed = models.CharField(max_length=20)
-  
+
 class OverdueInstallment(models.Model):
   amount = models.DecimalField(max_digits=15, decimal_places=2)
   dueDate = models.DateTimeField()
@@ -78,19 +78,16 @@ class Application(models.Model):
   name = models.CharField(max_length=50)
   loanType = models.CharField(max_length=100) # of the form "Personal - Car", etc
   amountAppliedFor = models.DecimalField(max_digits=15, decimal_places=2)
-  dateApplied = models.DateTimeField(auto_now_add=True)  
+  dateApplied = models.DateTimeField(auto_now_add=True)
   security = models.CharField(max_length=100, blank=True)
   customer = models.ForeignKey(Customer)
-  
-class AlottedApplication(Application):
-  amountAlloted = models.DecimalField(max_digits=15, decimal_places=2)
+  amountAllotted = models.DecimalField(max_digits=15, decimal_places=2)
   interestCategory = models.CharField(max_length=10)
   interestRate = models.DecimalField(max_digits=6, decimal_places=2) # This is annual interest rate in percentage.
   dateOfAllotment = models.DateTimeField()
-  loan = models.ForeignKey(Loan)
-  
-class ActiveApplication(Application):
-  status = models.CharField(max_length=20)
+  loan = models.ForeignKey(Loan, blank=True, null=True)
+  status = models.CharField(max_length=20) # Active, Allotted, Rejected, Cancelled
+  isArchived = models.BooleanField()
   remark = models.TextField()
 
 class SupportTicket(models.Model):
@@ -108,4 +105,3 @@ class SupportTicket(models.Model):
 
 
 #class TransactionsModule(models.Model):
-

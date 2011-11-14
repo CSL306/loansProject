@@ -1,0 +1,17 @@
+<ol>
+{% for application in processedApplications %}
+    <li>{{ application }}</li>
+{% endfor %}
+</ol>
+
+<ol>
+{% for application in underProcessingApplications %}
+    <li>{{ application }}</li>
+{% endfor %}
+</ol>
+
+<ol>
+{% for application in archivedApplications %}
+    <li>{{ application }}</li>
+{% endfor %}
+</ol>

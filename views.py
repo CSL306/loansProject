@@ -41,6 +41,35 @@ def dueInstallments(request):
   html = t.render(c)
   return HttpResponse(html)
 
+
+def allApplications(request):
+  # View for displaying all the loan applications a customer has made.
+  # These applications include those which have been approved, rejected or are under consideration.
+
+  # Authenticate Customer (TBD)
+  # customerID =
+
+  # Get a list of all Applications associated with that Customer.
+  applicationList = Application.objects.filter(customer=2)
+
+  processedApplications = []
+  underProcessingApplications = []
+  archivedApplications = []
+  for application in applicationList:
+    if application.isArchived == False:
+      if application.status == "Active":
+        underProcessingApplications.append({'name':application.name, 'loanType':application.loanType, 'amountAppliedFor':application.amountAppliedFor, 'dateApplied':application.dateApplied, 'status':application.status, 'remark':application.remark})
+      elif application.status == "Allotted" or application.status == "Rejected":
+        processedApplications.append({'name':application.name, 'loanType':application.loanType, 'status':application.status, 'amountAllotted':application.amountAllotted, 'dateOfAllotment':application.dateOfAllotment, 'interestCategory':application.interestCategory, 'interestRate':application.interestRate})
+    else:
+      archivedApplications.append({'name':application.name, 'loanType':application.loanType, 'status':application.status, 'amountAllotted':application.amountAllotted, 'dateOfAllotment':application.dateOfAllotment, 'interestCategory':application.interestCategory, 'interestRate':application.interestRate, 'amountAppliedFor':application.amountAppliedFor, 'dateApplied':application.dateApplied, 'remark':application.remark})
+
+  t = get_template('allApplications.html')
+  c = Context({'processedApplications':processedApplications, 'underProcessingApplications':underProcessingApplications, 'archivedApplications':archivedApplications})
+  html = t.render(c)
+  return HttpResponse(html)
+
+
 """
 def applyForLoan(request):
   # View for applying for a new loan.
@@ -53,10 +82,6 @@ def allLoans(request):
 
 def loanDetails(reques):
   # View for displaying all the details about a single loan.
-
-def allApplications(request):
-  # View for displaying all the loan applications a customer has made.
-  # These applications include those which have been approved, rejected or are under consideration.
 
 def applicationDetails(request):
   # View for displaying all the details about a single applicaiton.
