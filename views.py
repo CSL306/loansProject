@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Template, Context
 from django.template.loader import get_template
 from loans.models import *
+from django.shortcuts import render_to_response
 
 def home(request):
   t = get_template('home.html') # Instead of t = Template('')
@@ -115,6 +116,103 @@ def cancelOrArchive(request, cancelOrArchive, applicationID):
   return HttpResponseRedirect("/allApplications/")
 
 
+def allLoans(request):
+  
+  # Authenticate Customer
+  customerID=2
+  actLoans=ActiveLoan.objects.filter(customer=customerID) 
+  compLoans=CompletedLoan.objects.filter(customer=customerID)
+  actDict = []
+  compDict = []
+  for loan in actLoans:
+	  actDict.append({'id':loan.id,
+	                  'name':loan.name,
+                    'loanType':loan.loanType,
+			  						'principal':loan.principal,
+			  						'totalMonths':loan.originalMonths,
+			  						'dateTaken':loan.dateTaken,
+			  						'expTermination':loan.expectedDateOfTermination,
+			  						'outstandingAmount':loan.outstandingLoanBalance,
+			  						'monthsLeft':loan.elapsedMonths,
+                    'interestCategory':loan.interestCategory,
+                    'interestRate':loan.interestRate,
+			  						'monthlyInstallment':loan.monthlyInstallment,
+			  						'nextDueInstallment':loan.nextInstallmentDueDate,
+			  						'prepayPenalty':loan.prepaymentPenaltyRate,
+			  						'security':loan.security})
+ 
+  for loan in compLoans:
+	  compDict.append({'id':loan.id,
+	                  'name':loan.name,
+                    'loanType':loan.loanType,
+			  						'principal':loan.principal,
+			  						'totalMonths':loan.originalMonths,
+			  						'dateTaken':loan.dateTaken,
+			  						'dateOfCompletion':loan.dateOfCompletion,
+			  						'totalAmountPaid':loan.totalAmountPaid,
+                    'interestCategory':loan.interestCategory,
+                    'interestRate':loan.averageInterestRate})
+
+  return render_to_response('allLoans.html',locals())
+
+def loanDetails(request,status,loanID):
+  if status=="completed":
+    loanlist=CompletedLoan.objects.filter(id=loanID)
+    details = []
+    for comploan in loanlist:
+      details.append({'id':comploan.id,
+		                  'name':comploan.name,
+                      'comploanType':loan.loanType,
+                      'principal':comploan.principal,
+                      'totalMonths':comploan.originalMonths,
+                      'dateTaken':comploan.dateTaken,
+                      'dateOfCompletion':comploan.dateOfCompletion,
+                      'totalAmountPaid':comploan.totalAmountPaid,
+                      'interestCategory':comploan.interestCategory,
+                      'interestRate':comploan.averageInterestRate})
+    """
+    paymentList=Payment.objects.filter(loan=comploan.loan)
+    paymentDetails=[]
+    for payment in paymentList:
+      paymentDetails.append({'amount':payment.amount,
+														 'datePaid':payment.datePaid,
+														 'type':payment.paymentType,
+														 'merchant':payment.merchantUsed})
+    """
+    template='completedLoanDetails.html'
+
+  elif status=="active":
+    loanlist=ActiveLoan.objects.filter(id=loanID)
+    details = []
+    for actloan in loanlist:
+      details.append({'id':actloan.id,
+                      'name':actloan.name,
+                      'loanType':actloan.loanType,
+                      'principal':actloan.principal,
+                      'totalMonths':actloan.originalMonths,
+                      'dateTaken':actloan.dateTaken,
+                      'expTermination':actloan.expectedDateOfTermination,
+                      'outstandingAmount':actloan.outstandingLoanBalance,
+                      'monthsLeft':actloan.elapsedMonths,
+                      'interestCategory':actloan.interestCategory,
+                      'interestRate':actloan.interestRate,
+                      'monthlyInstallment':actloan.monthlyInstallment,
+                      'nextDueInstallment':actloan.nextInstallmentDueDate,
+                      'prepayPenalty':actloan.prepaymentPenaltyRate,
+                      'security':actloan.security})
+    """
+    paymentList=Payment.objects.filter(loan=actloan.loan)
+    paymentDetails=[]
+    for payment in paymentList:
+      paymentDetails.append({'amount':payment.amount,
+														 'datePaid':payment.datePaid,
+														 'type':payment.paymentType,
+ 														 'merchant':payment.merchantUsed})
+    """
+    template='activeLoanDetails.html'
+
+  return render_to_response(template,locals())
+
 """
 def applyForLoan(request):
   # View for applying for a new loan.
@@ -146,3 +244,4 @@ def payNow(request):
 def support(request):
   # View for filing a support request.
 """
+
