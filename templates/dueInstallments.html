@@ -1,11 +1,11 @@
 <ol>
 {% for installment in overdueInstallments %}
-    <li>{{ installment }}</li>
+    <li>{{ installment }} <a href="../payInstallment/{{installment.loan}}">Pay Now</a></li>
 {% endfor %}
 </ol>
 
 <ol>
 {% for installment in dueInstallments %}
-    <li>{{ installment }}</li>
+    <li>{{ installment }} <a href="../payInstallment/{{installment.loan}}">Pay Now</a></li>
 {% endfor %}
 </ol>

@@ -115,6 +115,10 @@ def cancelOrArchive(request, cancelOrArchive, applicationID):
   return HttpResponseRedirect("/allApplications/")
 
 
+def payInstallment(request, loanID):
+  return HttpResponse(loanID)
+
+
 """
 def applyForLoan(request):
   # View for applying for a new loan.
