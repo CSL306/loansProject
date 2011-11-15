@@ -24,14 +24,11 @@ urlpatterns = patterns('',
     (r'^allLoans/$',allLoans),
     (r'^loanDetails/(active)/(\d+)/$',loanDetails),
     (r'^loanDetails/(completed)/(\d+)/$',loanDetails),
-
+    (r'^payInstallment/(\d+)/$', payInstallment),
 )
 """
     (r'^applyForLoan/$', applyForLoan),
-    (r'^allLoans/$', allLoans),
-    (r'^loanDetails/$', loanDetails),
     (r'^applicationDetails/$', applicationDetails),
     (r'^paymentHistory/$', paymentHistory),
-    (r'^payNow/$', payNow),
     (r'^supporrt/$', support),
 """
