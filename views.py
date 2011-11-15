@@ -139,7 +139,8 @@ def allLoans(request):
 			  'monthlyInstallment':loan.monthlyInstallment,
 			  'nextDueInstallment':loan.nextInstallmentDueDate,
 			  'prepayPenalty':loan.prepaymentPenaltyRate,
-			  'security':loan.security})
+			  'security':loan.security,
+                          'detailLink':"../loanDetails/active/"+str(loan.id)})
  
   for loan in compLoans:
 	  compDict.append({'id':loan.id,
@@ -151,7 +152,9 @@ def allLoans(request):
 			   'dateOfCompletion':loan.dateOfCompletion,
 			   'totalAmountPaid':loan.totalAmountPaid,
 			   'interestCategory':loan.interestCategory,
-			   'interestRate':loan.averageInterestRate})
+			   'interestRate':loan.averageInterestRate,
+                           'detailLink':"../loanDetails/completed/"+str(loan.id)})
+
 
   return render_to_response('allLoans.html',locals())
 
