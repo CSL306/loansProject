@@ -162,7 +162,7 @@ def loanDetails(request,status,loanID):
     for comploan in loanlist:
       details.append({'id':comploan.id,
                       'name':comploan.name,
-                      'comploanType':loan.loanType,
+                      'loanType':comploan.loanType,
                       'principal':comploan.principal,
                       'totalMonths':comploan.originalMonths,
                       'dateTaken':comploan.dateTaken,
@@ -170,15 +170,13 @@ def loanDetails(request,status,loanID):
                       'totalAmountPaid':comploan.totalAmountPaid,
                       'interestCategory':comploan.interestCategory,
                       'interestRate':comploan.averageInterestRate})
-    """
-    paymentList=Payment.objects.filter(loan=comploan.loan)
+    paymentList=Payment.objects.filter(loan=comploan.id)
     paymentDetails=[]
     for payment in paymentList:
       paymentDetails.append({'amount':payment.amount,
                              'datePaid':payment.datePaid,
 			     'type':payment.paymentType,
 			     'merchant':payment.merchantUsed})
-    """
     template='completedLoanDetails.html'
 
   elif status=="active":
@@ -200,15 +198,14 @@ def loanDetails(request,status,loanID):
                       'nextDueInstallment':actloan.nextInstallmentDueDate,
                       'prepayPenalty':actloan.prepaymentPenaltyRate,
                       'security':actloan.security})
-    """
-    paymentList=Payment.objects.filter(loan=actloan.loan)
+
+    paymentList=Payment.objects.filter(loan=actloan.id)
     paymentDetails=[]
     for payment in paymentList:
       paymentDetails.append({'amount':payment.amount,
                              'datePaid':payment.datePaid,
 			     'type':payment.paymentType,
 			     'merchant':payment.merchantUsed})
-    """
     template='activeLoanDetails.html'
 
   return render_to_response(template,locals())

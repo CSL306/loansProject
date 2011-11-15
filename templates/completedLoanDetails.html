@@ -1,3 +1,11 @@
-{{details}}
-<br/>
-{{paymentDetails}}
+<ol>
+{% for detail in details %}
+    <li>{{ detail }}</li>
+{% endfor %}
+</ol>
+
+<ol>
+{% for paymentDetail in paymentDetails %}
+    <li>{{ paymentDetail }}</li>
+{% endfor %}
+</ol>
