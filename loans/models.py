@@ -2,6 +2,24 @@ from django.db import models
 
 # Create your models here.
 
+LOAN_TYPES = (
+  ("Personal - Home", "Personal - Home"),
+  ("Personal - Car", "Personal - Car"),
+  ("Corporate", "Corporate"),
+)
+
+COMPLAINT_TYPES = (
+  ("TYPE A", "TYPE A"),
+  ("TYPE B", "TYPE B")
+)
+
+SECURITY_TYPES = (
+  ("None", "None"),
+  ("Vehicle", "Vehicle"),
+  ("Car", "Car"),
+  ("House", "House"),
+)
+
 class Customer(models.Model):
   name = models.CharField(max_length=50)
   accountNumber = models.IntegerField()
@@ -13,26 +31,20 @@ class Customer(models.Model):
 
 class Loan(models.Model):
   name = models.CharField(max_length=50)
+  isActive = models.BooleanField()
   principal = models.DecimalField(max_digits=15, decimal_places=2)
   originalMonths = models.IntegerField()
   interestCategory = models.CharField(max_length=10) # Fixed or Floating
-  loanType = models.CharField(max_length=100) # of the form "Personal - Car", etc
+  loanType = models.CharField(max_length=100, choices=LOAN_TYPES) # of the form "Personal - Car", etc
   dateTaken = models.DateTimeField(auto_now_add=True)
-  isSecured = models.BooleanField(blank=True)
-  security = models.CharField(max_length=100, blank=True)
+  security = models.CharField(max_length=100, choices=SECURITY_TYPES)
   customer = models.ForeignKey(Customer)
-
-  def save(self, *args, **kwargs):
-    if self.security == False:
-      self.isSecured = False
-    else:
-      self.isSecured = True
-    super(Loan, self).save(*args, **kwargs)
 
   def __unicode__(self):
     return u'%s' % (self.name)
 
-class ActiveLoan(Loan):
+class ActiveLoan(models.Model):
+  loan = models.OneToOneField(Loan)
   expectedDateOfTermination = models.DateTimeField()
   elapsedMonths = models.IntegerField()
   monthlyInstallment = models.DecimalField(max_digits=15, decimal_places=2)
@@ -54,8 +66,9 @@ class ActiveLoan(Loan):
     self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
     super(ActiveLoan, self).save(*args, **kwargs)
 
-class CompletedLoan(Loan):
-  dateOfCompletion = models.DateTimeField()
+class CompletedLoan(models.Model):
+  loan = models.OneToOneField(Loan)
+  dateOfCompletion = models.DateTimeField(auto_now_add=True)
   totalAmountPaid = models.DecimalField(max_digits=15, decimal_places=2)
   averageInterestRate = models.DecimalField(max_digits=6, decimal_places=2)
 
@@ -76,10 +89,10 @@ class OverdueInstallment(models.Model):
 
 class Application(models.Model):
   name = models.CharField(max_length=50)
-  loanType = models.CharField(max_length=100) # of the form "Personal - Car", etc
+  loanType = models.CharField(max_length=100, choices=LOAN_TYPES) # of the form "Personal - Car", etc
   amountAppliedFor = models.DecimalField(max_digits=15, decimal_places=2)
   dateApplied = models.DateTimeField(auto_now_add=True)
-  security = models.CharField(max_length=100, blank=True)
+  security = models.CharField(max_length=100, choices=SECURITY_TYPES)
   customer = models.ForeignKey(Customer)
   amountAllotted = models.DecimalField(max_digits=15, decimal_places=2)
   interestCategory = models.CharField(max_length=10)
@@ -92,7 +105,7 @@ class Application(models.Model):
 
 class SupportTicket(models.Model):
   loan = models.ForeignKey(Loan, blank=True, null=True)
-  complaintType = models.CharField(max_length=20)
+  complaintType = models.CharField(max_length=20, choices=COMPLAINT_TYPES)
   complaintMessage = models.TextField()
 
 #class Merchant(models.Model):
