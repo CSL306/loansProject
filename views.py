@@ -175,35 +175,35 @@ def loanDetails(request,loanId):
                             'merchant':payment.merchantUsed})
 
   if (loan.isactive):
-    activeLoan = loan.activeLoan
-    details = {'id':actloan.id,
-                    'name':actloan.loan.name,
-                    'loanType':actloan.loan.loanType,
-                    'principal':actloan.loan.principal,
-                    'totalMonths':actloan.loan.originalMonths,
-                    'dateTaken':actloan.loan.dateTaken,
-                    'expTermination':actloan.expectedDateOfTermination,
-                    'outstandingAmount':actloan.outstandingLoanBalance,
-                    'monthsLeft':actloan.elapsedMonths,
-                    'interestCategory':actloan.loan.interestCategory,
-                    'interestRate':actloan.interestRate,
-                    'monthlyInstallment':actloan.monthlyInstallment,
-                    'nextDueInstallment':actloan.nextInstallmentDueDate,
-                    'prepayPenalty':actloan.prepaymentPenaltyRate,
-                    'security':actloan.loan.security}
-    return render_to_response('activeLoanDetails.html', locals())
+    activeLoan = loan.activeloan
+    details = {'id':activeLoan.id,
+               'name':activeLoan.loan.name,
+               'loanType':activeLoan.loan.loanType,
+               'principal':activeLoan.loan.principal,
+               'totalMonths':activeLoan.loan.originalMonths,
+               'dateTaken':activeLoan.loan.dateTaken,
+               'expTermination':activeLoan.expectedDateOfTermination,
+               'outstandingAmount':activeLoan.outstandingLoanBalance,
+               'monthsLeft':activeLoan.elapsedMonths,
+               'interestCategory':activeLoan.loan.interestCategory,
+               'interestRate':activeLoan.interestRate,
+               'monthlyInstallment':activeLoan.monthlyInstallment,
+               'nextDueInstallment':activeLoan.nextInstallmentDueDate,
+               'prepayPenalty':activeLoan.prepaymentPenaltyRate,
+               'security':activeLoan.loan.security}
+    return render_to_response('activeLoanDetails.html', locals())    
   else:
-    completedLoan = loan.completedLoan
+    completedLoan = loan.completedloan
     details = {'id':completedLoan.loan.id,
-                      'name':completedLoan.loan.name,
-                      'loanType':completedLoan.loan.loanType,
-                      'principal':completedLoan.loan.principal,
-                      'totalMonths':completedLoan.loan.originalMonths,
-                      'dateTaken':completedLoan.loan.dateTaken,
-                      'dateOfCompletion':completedLoan.dateOfCompletion,
-                      'totalAmountPaid':completedLoan.totalAmountPaid,
-                      'interestCategory':completedLoan.loan.interestCategory,
-                      'interestRate':completedLoan.averageInterestRate}
+               'name':completedLoan.loan.name,
+               'loanType':completedLoan.loan.loanType,
+               'principal':completedLoan.loan.principal,
+               'totalMonths':completedLoan.loan.originalMonths,
+               'dateTaken':completedLoan.loan.dateTaken,
+               'dateOfCompletion':completedLoan.dateOfCompletion,
+               'totalAmountPaid':completedLoan.totalAmountPaid,
+               'interestCategory':completedLoan.loan.interestCategory,
+               'interestRate':completedLoan.averageInterestRate}
     return render_to_response('completedLoanDetails.html', locals())
 
 
@@ -212,7 +212,7 @@ def payInstallment(request, loanId):
   customerId = getCustomerId(request)
 
   # View for paying an installment
-  activeLoan = ActiveLoan.objects.filter(loan_id=loanId)
+  activeLoan = ActiveLoan.objects.get(loan__id=loanId)
   dueDate = activeLoan.nextInstallmentDueDate
   installment = activeLoan.monthlyInstallment
   outstandingLoanBalance = activeLoan.outstandingLoanBalance
@@ -224,15 +224,15 @@ def payInstallmentThanks(request, loanId):
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
-  activeLoan = ActiveLoan.objects.get(loan_id=loanId)
-
+  activeLoan = ActiveLoan.objects.get(loan__id=loanId)
+  
   # Adds the payment to Payment model
   payment = Payment(amount=activeLoan.monthlyInstallment, loan=activeLoan.loan, paymentType="installment", merchantUsed="none")
   payment.save()
 
   # Updates the activeLoan or makes it a completed loan if this was the last installment.
   if activeLoan.elapsedMonths + 1 == activeLoan.originalMonths:
-    paymentList = Payment.objects.filter(loan_id=activeLoanId)
+    paymentList = Payment.objects.filter(loan__id=loanId)
     totalAmountPaid = 0
     for payment in paymentList:
       totalAmountPaid += payment.amount
@@ -281,14 +281,14 @@ def payPrepayment(request, loanId):
   loanName = activeLoan.loan.name
   outstandingAmount = activeLoan.outstandingLoanBalance
   if request.method == 'POST':
-      form = PrepaymentForm(request.POST)
+      form = PrepaymentForm(loanId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
           amount = cd.prepayAmount
           #TODO update details for the active loan
           return HttpResponseRedirect('/payPrepayment/thanks/')
   else:
-      form = PrepaymentForm(initial = {'prepayAmount': outstandingAmount/2})
+      form = PrepaymentForm(loanId, initial = {'prepayAmount': outstandingAmount/2})
   return render_to_response('payPrepayment.html', locals())
 
 
@@ -306,16 +306,14 @@ def support(request):
   customerId = getCustomerId(request)
 
   if request.method == 'POST':
-      form = SupportForm(request.POST)
+      form = SupportForm(customerId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          ticket = SupportTicket(loan=Loan.objects.get(id=cd.loanId), complaintType=cd.complaintType, complaintMessage=cd.message)
+          ticket = SupportTicket(loan=cd.loan, complaintType=cd.complaintType, complaintMessage=cd.message)
           ticket.save()
           return HttpResponseRedirect('/support/thanks/')
   else:
-      form = SupportForm(
-          initial={'message': 'Please enter your message here.'}
-      )
+      form = SupportForm(customerId, initial={'message': 'Please enter your message here.'})
   return render_to_response('support.html', locals())
 
 

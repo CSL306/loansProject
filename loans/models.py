@@ -12,6 +12,7 @@ LOAN_TYPES = (
 )
 
 COMPLAINT_TYPES = (
+  ("None of these", "None of these"),
   ("TYPE A", "TYPE A"),
   ("TYPE B", "TYPE B")
 )
@@ -20,7 +21,7 @@ SECURITY_TYPES = (
   ("None", "None"),
   ("Vehicle", "Vehicle"),
   ("Car", "Car"),
-  ("House", "House"),
+  ("House", "House")
 )
 
 class Customer(models.Model):
