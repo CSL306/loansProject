@@ -1,31 +1,31 @@
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import Template, Context
-from django.template.loader import get_template
-from loans.models import *
 from django.shortcuts import render_to_response
 from forms import *
 from externalapis import *
+from loans.models import *
 
 def getCustomerId(request):
-  return 2
+  return 1
   #sessionId = request.session.get("id","none")
   #if (sessionId != "none"):
     #return IdentityModule.getCustomerId(sessionId)
   #else:
     #return HttpResponseRedirect("/home")
-    
+
+
 def home(request):
   # Home page for a unsigned user.
   return render_to_response('home.html',locals())
 
+
 def dueInstallments(request):
   # View for displaying all due installments for all loans of a customer.
-  
-  # Get the customerId and verify if the session is active.  
+
+  # Get the customerId and verify if the session is active.
   customerID = getCustomerId(request)
 
   # Get a list of all ActiveLoans associated with that Customer.
-  activeLoanList = ActiveLoan.objects.filter(customer=2)
+  activeLoanList = Loan.objects.filter(customer=customerID, isActive=True)
 
   # For each ActiveLoan get a list of all OverdueInstallment and merge these lists
   # Make a list of due installments using nextInstallmentDueDate for each ActiveLoan
@@ -33,31 +33,32 @@ def dueInstallments(request):
   overdueInstallments = []
   dueInstallments = []
   for activeLoan in activeLoanList:
-    ois = OverdueInstallment.objects.filter(loan=activeLoan.loan)
+    ois = OverdueInstallment.objects.filter(loan=activeLoan)
     for oi in ois:
       overdueInstallments.append({'amount':oi.amount,
                                   'dueDate':oi.dueDate,
                                   'loan':oi.loan_id})
-    di = {'amount':activeLoan.monthlyInstallment,
-          'dueDate':activeLoan.nextInstallmentDueDate,
-          'loan':activeLoan.id}
+    di = {'amount':activeLoan.activeloan.monthlyInstallment,
+          'dueDate':activeLoan.activeloan.nextInstallmentDueDate,
+          'loan':activeLoan.activeloan.id}
     dueInstallments.append(di)
 
   def getDueDate(installment):
     return installment['dueDate']
-    
+
   overdueInstallments = sorted(overdueInstallments, key=getDueDate)
   dueInstallments = sorted(dueInstallments, key=getDueDate)
-  
+
   return render_to_response('dueInstallments.html', locals())
+
 
 def allApplications(request):
   # View for displaying all the loan applications a customer has made.
   # These applications include those which have been approved, rejected or are under consideration.
-  
+
   # Get the customerId and verify if the session is active.
   customerID = getCustomerId(request)
-  
+
   # Get a list of all Applications associated with that Customer.
   # Sort them in three categories.
   applicationList = Application.objects.filter(customer=customerID)
@@ -85,7 +86,10 @@ def allApplications(request):
                                       'amountAllotted':application.amountAllotted,
                                       'dateOfAllotment':application.dateOfAllotment,
                                       'interestCategory':application.interestCategory,
-                                      'interestRate':application.interestRate})
+                                      'interestRate':application.interestRate,
+                                      'amountAppliedFor':application.amountAppliedFor,
+                                      'dateApplied':application.dateApplied,})
+
 
     else:
       archivedApplications.append({'id':application.id,
@@ -102,6 +106,7 @@ def allApplications(request):
 
   return render_to_response('allApplications.html', locals())
 
+
 def cancelOrArchive(request, cancelOrArchive, applicationID):
   customerID = getCustomerId(request)
   if cancelOrArchive=="cancel":
@@ -111,16 +116,16 @@ def cancelOrArchive(request, cancelOrArchive, applicationID):
   return HttpResponseRedirect("/allApplications/")
 
 
-def allLoans(request):  
+def allLoans(request):
   # Show all loans for a customer.
-  # Get the customerId and verify if the session is active.  
+  # Get the customerId and verify if the session is active.
   customerID = getCustomerId(request)
-  
-  actLoans=ActiveLoan.objects.filter(customer=customerID) 
+
+  actLoans=ActiveLoan.objects.filter(customer=customerID)
   compLoans=CompletedLoan.objects.filter(customer=customerID)
   actDict = []
   compDict = []
-  
+
   for actLoan in actLoans:
     actDict.append({'id':actLoan.loan.id,
                     'name':actLoan.loan.name,
@@ -137,7 +142,7 @@ def allLoans(request):
                     'nextDueInstallment':actLoan.nextInstallmentDueDate,
                     'prepayPenalty':actLoan.prepaymentPenaltyRate,
                     'security':actLoan.security})
- 
+
   for compLoan in compLoans:
     compDict.append({'id':compLoan.loan.id,
                      'name':compLoan.loan.name,
@@ -152,13 +157,14 @@ def allLoans(request):
 
   return render_to_response('allLoans.html',locals())
 
+
 def loanDetails(request,loanId):
   # Display the loan details for a loanId
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   loan = Loan.objects.get(id=loanId)
-  
+
   # Retrieve the payment list for a loan
   paymentList = Payment.objects.filter(loan=id)
   paymentDetails = []
@@ -185,7 +191,7 @@ def loanDetails(request,loanId):
                     'nextDueInstallment':actloan.nextInstallmentDueDate,
                     'prepayPenalty':actloan.prepaymentPenaltyRate,
                     'security':actloan.loan.security}
-    return render_to_response('activeLoanDetails.html', locals())    
+    return render_to_response('activeLoanDetails.html', locals())
   else:
     completedLoan = loan.completedLoan
     details = {'id':completedLoan.loan.id,
@@ -200,34 +206,36 @@ def loanDetails(request,loanId):
                       'interestRate':completedLoan.averageInterestRate}
     return render_to_response('completedLoanDetails.html', locals())
 
+
 def payInstallment(request, loanId):
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   # View for paying an installment
   activeLoan = ActiveLoan.objects.filter(loan_id=loanId)
   dueDate = activeLoan.nextInstallmentDueDate
   installment = activeLoan.monthlyInstallment
   outstandingLoanBalance = activeLoan.outstandingLoanBalance
   return render_to_response('payInstallment.html', locals())
-  
+
+
 def payInstallmentThanks(request, loanId):
   # Thank you page after the payment of an installment.
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   activeLoan = ActiveLoan.objects.get(loan_id=loanId)
-  
+
   # Adds the payment to Payment model
   payment = Payment(amount=activeLoan.monthlyInstallment, loan=activeLoan.loan, paymentType="installment", merchantUsed="none")
   payment.save()
-  
+
   # Updates the activeLoan or makes it a completed loan if this was the last installment.
   if activeLoan.elapsedMonths + 1 == activeLoan.originalMonths:
     paymentList = Payment.objects.filter(loan_id=activeLoanId)
     totalAmountPaid = 0
     for payment in paymentList:
-      totalAmountPaid += payment.amount   
+      totalAmountPaid += payment.amount
     averageInterestRate = activeLoan.interestRate
     completedLoan = CompletedLoan(loan=activeLoan.loan, totalAmountPaid=totalAmountPaid, averageInterestRate=averageInterestRate)
     completedLoan.save()
@@ -237,11 +245,12 @@ def payInstallmentThanks(request, loanId):
     activeLoan.elapsedMonths += 1
     activeLoan.save()
 
+
 def newApplication(request):
   # Files a new application.
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   # View for applying for a new loan.
   if request.method == 'POST':
       form = ApplicationForm(request.POST)
@@ -253,19 +262,21 @@ def newApplication(request):
   else:
       form = ApplicationForm()
   return render_to_response('newApplication.html', locals())
-  
+
+
 def newApplicationThanks(request):
-  # Thank you page after a new application request.  
+  # Thank you page after a new application request.
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   return render_to_response('newApplicationThanks.html')
-  
+
+
 def payPrepayment(request, loanId):
   # Prepay an amount for a loan.
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   activeLoan = ActiveLoan.objects.get(loan_id=loanId)
   loanName = activeLoan.loan.name
   outstandingAmount = activeLoan.outstandingLoanBalance
@@ -279,19 +290,21 @@ def payPrepayment(request, loanId):
   else:
       form = PrepaymentForm(initial = {'prepayAmount': outstandingAmount/2})
   return render_to_response('payPrepayment.html', locals())
-  
+
+
 def payPrepaymentThanks(request):
   # Thank you page after the payment of an installment.
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   return render_to_response('payPrepaymentThanks.html', local())
-  
+
+
 def support(request):
   # View for filing a support request.
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   if request.method == 'POST':
       form = SupportForm(request.POST)
       if form.is_valid():
@@ -305,24 +318,20 @@ def support(request):
       )
   return render_to_response('support.html', locals())
 
+
 def supportThanks(request):
   # Thank you page after a support request submission.
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   return render_to_response('supportThanks.html', locals())
 
-"""
 
+"""
 def paymentHistory(request):
   # View for displaying the payment history.
 
 
 def payInstallment(request):
   # View for paying an installment.
-  
 """
-
-
-
-

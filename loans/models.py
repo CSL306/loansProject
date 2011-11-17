@@ -1,10 +1,13 @@
 from django.db import models
+from django.db.models import signals
+from django.db.models.signals import post_save
 
 # Create your models here.
 
 LOAN_TYPES = (
   ("Personal - Home", "Personal - Home"),
   ("Personal - Car", "Personal - Car"),
+  ("Personal - Education", "Personal - Education"),
   ("Corporate", "Corporate"),
 )
 
@@ -35,7 +38,7 @@ class Loan(models.Model):
   principal = models.DecimalField(max_digits=15, decimal_places=2)
   originalMonths = models.IntegerField()
   interestCategory = models.CharField(max_length=10) # Fixed or Floating
-  loanType = models.CharField(max_length=100, choices=LOAN_TYPES) # of the form "Personal - Car", etc
+  loanType = models.CharField(max_length=100, choices=LOAN_TYPES)
   dateTaken = models.DateTimeField(auto_now_add=True)
   security = models.CharField(max_length=100, choices=SECURITY_TYPES)
   customer = models.ForeignKey(Customer)
@@ -55,16 +58,37 @@ class ActiveLoan(models.Model):
 
   def computeMonthlyInstallment(self):
     monthlyInterestRate = self.interestRate/(100*12)
-    return (self.principal * monthlyInterestRate * (1 + monthlyInterestRate)**(self.originalMonths))/((1 + monthlyInterestRate)**(self.originalMonths) - 1)
+    remainingMonths = self.loan.originalMonths - self.elapsedMonths
+    if self.elapsedMonths != 0:
+      return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths+1)) / ((1+monthlyInterestRate)**(remainingMonths+1) - 1)
+    else:
+      return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths)) / ((1+monthlyInterestRate)**(remainingMonths) - 1)
 
   def computeOutstandingLoanBalance(self):
     monthlyInterestRate = self.interestRate/(100*12)
-    return self.principal * ((1+monthlyInterestRate)**(self.originalMonths) - (1 + monthlyInterestRate)**(self.elapsedMonths))/((1 + monthlyInterestRate)**(self.originalMonths) - 1)
+    remainingMonths = self.loan.originalMonths - self.elapsedMonths
+    if self.elapsedMonths != 0:
+      return self.outstandingLoanBalance * ((1+monthlyInterestRate)**(remainingMonths+1) - (1 + monthlyInterestRate))/((1 + monthlyInterestRate)**(remainingMonths+1) - 1)
+    else:
+      return self.loan.principal
 
   def save(self, *args, **kwargs):
     self.monthlyInstallment = self.computeMonthlyInstallment()
     self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
     super(ActiveLoan, self).save(*args, **kwargs)
+
+def firstSaveHandler(sender, instance, created, *args, **kwargs):
+  """
+     sender - The model class. (ActiveLoan)
+     instance - The actual instance being saved.
+     created - Boolean; True if a new record was created.
+  """
+  if created:
+    instance.outstandingLoanBalance = instance.loan.principal
+    instance.elapsedMonths = 0
+    instance.save()
+
+post_save.connect(firstSaveHandler, sender=ActiveLoan)
 
 class CompletedLoan(models.Model):
   loan = models.OneToOneField(Loan)
@@ -89,7 +113,7 @@ class OverdueInstallment(models.Model):
 
 class Application(models.Model):
   name = models.CharField(max_length=50)
-  loanType = models.CharField(max_length=100, choices=LOAN_TYPES) # of the form "Personal - Car", etc
+  loanType = models.CharField(max_length=100, choices=LOAN_TYPES)
   amountAppliedFor = models.DecimalField(max_digits=15, decimal_places=2)
   dateApplied = models.DateTimeField(auto_now_add=True)
   security = models.CharField(max_length=100, choices=SECURITY_TYPES)
@@ -107,6 +131,7 @@ class SupportTicket(models.Model):
   loan = models.ForeignKey(Loan, blank=True, null=True)
   complaintType = models.CharField(max_length=20, choices=COMPLAINT_TYPES)
   complaintMessage = models.TextField()
+  customer = models.ForeignKey(Customer)
 
 #class Merchant(models.Model):
 
