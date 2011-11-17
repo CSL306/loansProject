@@ -121,13 +121,13 @@ def allLoans(request):
   # Get the customerId and verify if the session is active.
   customerID = getCustomerId(request)
 
-  actLoans=ActiveLoan.objects.filter(customer=customerID)
-  compLoans=CompletedLoan.objects.filter(customer=customerID)
+  loanList=Loan.objects.filter(customer=customerID)
   actDict = []
   compDict = []
 
-  for actLoan in actLoans:
-    actDict.append({'id':actLoan.loan.id,
+  for loan in loanList:
+    if loan.isActive:
+      actDict.append({'id':actLoan.id,
                     'name':actLoan.loan.name,
                     'loanType':actLoan.loan.loanType,
                     'principal':actLoan.loan.principal,
@@ -142,9 +142,8 @@ def allLoans(request):
                     'nextDueInstallment':actLoan.nextInstallmentDueDate,
                     'prepayPenalty':actLoan.prepaymentPenaltyRate,
                     'security':actLoan.security})
-
-  for compLoan in compLoans:
-    compDict.append({'id':compLoan.loan.id,
+    else:
+      compDict.append({'id':compLoan.id,
                      'name':compLoan.loan.name,
                      'loanType':compLoan.loan.loanType,
                      'principal':compLoan.loan.principal,
@@ -170,9 +169,10 @@ def loanDetails(request,loanId):
   paymentDetails = []
   for payment in paymentList:
     paymentDetails.append({'amount':payment.amount,
-                            'datePaid':payment.datePaid,
-                            'type':payment.paymentType,
-                            'merchant':payment.merchantUsed})
+                           'datePaid':payment.datePaid,
+                           'type':payment.paymentType,
+                           'merchant':payment.merchantUsed,
+    })
 
   if (loan.isactive):
     activeLoan = loan.activeloan
