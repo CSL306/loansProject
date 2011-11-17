@@ -169,7 +169,7 @@ def loanDetails(request,loanId):
                             'merchant':payment.merchantUsed})
 
   if (loan.isactive):
-    activeLoan = loan.activeLoan
+    activeLoan = loan.activeloan
     details = {'id':actloan.id,
                     'name':actloan.loan.name,
                     'loanType':actloan.loan.loanType,
@@ -187,7 +187,7 @@ def loanDetails(request,loanId):
                     'security':actloan.loan.security}
     return render_to_response('activeLoanDetails.html', locals())    
   else:
-    completedLoan = loan.completedLoan
+    completedLoan = loan.completedloan
     details = {'id':completedLoan.loan.id,
                       'name':completedLoan.loan.name,
                       'loanType':completedLoan.loan.loanType,
@@ -270,7 +270,7 @@ def payPrepayment(request, loanId):
   loanName = activeLoan.loan.name
   outstandingAmount = activeLoan.outstandingLoanBalance
   if request.method == 'POST':
-      form = PrepaymentForm(request.POST)
+      form = PrepaymentForm(activeloan.loan.id, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
           amount = cd.prepayAmount
@@ -293,10 +293,10 @@ def support(request):
   customerId = getCustomerId(request)
   
   if request.method == 'POST':
-      form = SupportForm(request.POST)
+      form = SupportForm(customerId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          ticket = SupportTicket(loan=Loan.objects.get(id=cd.loanId), complaintType=cd.complaintType, complaintMessage=cd.message)
+          ticket = SupportTicket(loan=cd.loan, complaintType=cd.complaintType, complaintMessage=cd.message)
           ticket.save()
           return HttpResponseRedirect('/support/thanks/')
   else:
@@ -322,7 +322,5 @@ def payInstallment(request):
   # View for paying an installment.
   
 """
-
-
 
 

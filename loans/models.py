@@ -5,10 +5,11 @@ from django.db import models
 LOAN_TYPES = (
   ("Personal - Home", "Personal - Home"),
   ("Personal - Car", "Personal - Car"),
-  ("Corporate", "Corporate"),
+  ("Corporate", "Corporate")
 )
 
 COMPLAINT_TYPES = (
+  ("None of these", "None of these"),
   ("TYPE A", "TYPE A"),
   ("TYPE B", "TYPE B")
 )
@@ -17,7 +18,7 @@ SECURITY_TYPES = (
   ("None", "None"),
   ("Vehicle", "Vehicle"),
   ("Car", "Car"),
-  ("House", "House"),
+  ("House", "House")
 )
 
 class Customer(models.Model):
@@ -107,6 +108,7 @@ class SupportTicket(models.Model):
   loan = models.ForeignKey(Loan, blank=True, null=True)
   complaintType = models.CharField(max_length=20, choices=COMPLAINT_TYPES)
   complaintMessage = models.TextField()
+  customer = models.ForeignKey(Customer)
 
 #class Merchant(models.Model):
 

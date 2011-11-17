@@ -1,17 +1,21 @@
 from django import forms
-from loans.models import LOAN_TYPES, COMPLAINT_TYPES, SECURITY_TYPES
+from loans.models import *
 
-class supportForm(forms.Form):
+class SupportForm(forms.Form):
   complaintType = forms.ChoiceField(choices=COMPLAINT_TYPES)
-  loanId = forms.IntegerField()
   message = forms.CharField(widget=forms.Textarea)
   
-  def supportForm(self, customerId):
+  def __init__(self, customerId, data = None):
     self.customerId = customerId
+    super(SupportForm, self).__init__(data)
+    self.fields['loan'] = forms.ModelChoiceField(queryset=Loan.objects.filter(customer__id=customerId))
     
-  # TODO: Validate the loanId is valid for the given customer
-  def clean_loanId(self):
-    return loanId
+  def clean_loan(self):
+    loan = self.cleaned_data["loan"]
+    if loan not in Loan.objects.filter(customer__id=self.customerId):
+      raise forms.ValidationError('The loan provided is not valid.')
+    else:
+      return loan
     
 class ApplicationForm(forms.Form):
   loanName = forms.CharField()
@@ -21,11 +25,16 @@ class ApplicationForm(forms.Form):
   acceptedTerms = forms.BooleanField()
   
 class PrepaymentForm(forms.Form):
-  prepaymentAmount = forms.DecimalField(min_value=5000)
+  prepaymentAmount = forms.DecimalField()
   
-  def PrepaymentForm(self, loanId):
+  def __init__(self, loanId, data = None):
     self.loanId = loanId
+    super(PrepaymentForm, self).__init__(data)
   
-  #TODO: Validate against the outstanding loan balance.
   def clean_prepaymenAmount(self):
-    return prepaymentAmount
+    formAmount = form.cleaned_data["prepaymentAmount"]
+    maxAmount = Loan.objects.get(id=self.loanId).activeloan.outstandingLoanBalance
+    if (formAmount > maxAmount):
+      raise forms.ValidationError('Prepayment amount cannot be more than the outstanding amount for the loan.')
+    else: 
+      return formAmount
