@@ -4,6 +4,7 @@ from forms import *
 from externalapis import *
 from loans.models import *
 
+
 def getCustomerId(request):
   return 1
   #sessionId = request.session.get("id","none")
@@ -90,7 +91,6 @@ def allApplications(request):
                                       'amountAppliedFor':application.amountAppliedFor,
                                       'dateApplied':application.dateApplied,})
 
-
     else:
       archivedApplications.append({'id':application.id,
                                    'name':application.name,
@@ -127,32 +127,32 @@ def allLoans(request):
 
   for loan in loanList:
     if loan.isActive:
-      actDict.append({'id':actLoan.id,
-                    'name':actLoan.loan.name,
-                    'loanType':actLoan.loan.loanType,
-                    'principal':actLoan.loan.principal,
-                    'totalMonths':actLoan.loan.originalMonths,
-                    'dateTaken':actLoan.loan.dateTaken,
-                    'expTermination':actLoan.expectedDateOfTermination,
-                    'outstandingAmount':actLoan.outstandingLoanBalance,
-                    'monthsLeft':actLoan.loan.originalMonths - actLoan.elapsedMonths,
-                    'interestCategory':actLoan.loan.interestCategory,
-                    'interestRate':actLoan.interestRate,
-                    'monthlyInstallment':actLoan.monthlyInstallment,
-                    'nextDueInstallment':actLoan.nextInstallmentDueDate,
-                    'prepayPenalty':actLoan.prepaymentPenaltyRate,
-                    'security':actLoan.security})
+      actDict.append({'id':loan.id,
+                      'name':loan.name,
+                      'loanType':loan.loanType,
+                      'principal':loan.principal,
+                      'totalMonths':loan.originalMonths,
+                      'dateTaken':loan.dateTaken,
+                      'expectedDateOfTermination':loan.activeloan.expectedDateOfTermination,
+                      'outstandingLoanBalance':loan.activeloan.outstandingLoanBalance,
+                      'monthsLeft':loan.originalMonths - loan.activeloan.elapsedMonths,
+                      'interestCategory':loan.interestCategory,
+                      'interestRate':loan.activeloan.interestRate,
+                      'monthlyInstallment':loan.activeloan.monthlyInstallment,
+                      'nextInstallmentDueDate':loan.activeloan.nextInstallmentDueDate,
+                      'prepaymentPenaltyRate':loan.activeloan.prepaymentPenaltyRate,
+                      'security':loan.security})
     else:
-      compDict.append({'id':compLoan.id,
-                     'name':compLoan.loan.name,
-                     'loanType':compLoan.loan.loanType,
-                     'principal':compLoan.loan.principal,
-                     'totalMonths':compLoan.loan.originalMonths,
-                     'dateTaken':compLoan.loan.dateTaken,
-                     'dateOfCompletion':compLoan.dateOfCompletion,
-                     'totalAmountPaid':compLoan.totalAmountPaid,
-                     'interestCategory':compLoan.loan.interestCategory,
-                     'interestRate':compLoan.averageInterestRate})
+      compDict.append({'id':loan.id,
+                       'name':loan.name,
+                       'loanType':loan.loanType,
+                       'principal':loan.principal,
+                       'totalMonths':loan.originalMonths,
+                       'dateTaken':loan.dateTaken,
+                       'dateOfCompletion':loan.completedloan.dateOfCompletion,
+                       'totalAmountPaid':loan.completedloan.totalAmountPaid,
+                       'interestCategory':loan.interestCategory,
+                       'averageInterestRate':loan.completedloan.averageInterestRate})
 
   return render_to_response('allLoans.html',locals())
 
@@ -165,7 +165,7 @@ def loanDetails(request,loanId):
   loan = Loan.objects.get(id=loanId)
 
   # Retrieve the payment list for a loan
-  paymentList = Payment.objects.filter(loan=id)
+  paymentList = Payment.objects.filter(loan=loanId)
   paymentDetails = []
   for payment in paymentList:
     paymentDetails.append({'amount':payment.amount,
@@ -174,7 +174,7 @@ def loanDetails(request,loanId):
                            'merchant':payment.merchantUsed,
     })
 
-  if (loan.isactive):
+  if (loan.isActive):
     activeLoan = loan.activeloan
     details = {'id':activeLoan.id,
                'name':activeLoan.loan.name,
@@ -191,7 +191,7 @@ def loanDetails(request,loanId):
                'nextDueInstallment':activeLoan.nextInstallmentDueDate,
                'prepayPenalty':activeLoan.prepaymentPenaltyRate,
                'security':activeLoan.loan.security}
-    return render_to_response('activeLoanDetails.html', locals())    
+    return render_to_response('activeLoanDetails.html', locals())
   else:
     completedLoan = loan.completedloan
     details = {'id':completedLoan.loan.id,
@@ -225,13 +225,13 @@ def payInstallmentThanks(request, loanId):
   customerId = getCustomerId(request)
 
   activeLoan = ActiveLoan.objects.get(loan__id=loanId)
-  
+
   # Adds the payment to Payment model
   payment = Payment(amount=activeLoan.monthlyInstallment, loan=activeLoan.loan, paymentType="installment", merchantUsed="none")
   payment.save()
 
   # Updates the activeLoan or makes it a completed loan if this was the last installment.
-  if activeLoan.elapsedMonths + 1 == activeLoan.originalMonths:
+  if activeLoan.elapsedMonths + 1 == activeLoan.loan.originalMonths:
     paymentList = Payment.objects.filter(loan__id=loanId)
     totalAmountPaid = 0
     for payment in paymentList:
@@ -239,7 +239,7 @@ def payInstallmentThanks(request, loanId):
     averageInterestRate = activeLoan.interestRate
     completedLoan = CompletedLoan(loan=activeLoan.loan, totalAmountPaid=totalAmountPaid, averageInterestRate=averageInterestRate)
     completedLoan.save()
-    activeLoan.loan.isactive = False
+    activeLoan.loan.isActive = False
     activeLoan.delete()
   else:
     activeLoan.elapsedMonths += 1
@@ -285,7 +285,12 @@ def payPrepayment(request, loanId):
       if form.is_valid():
           cd = form.cleaned_data
           amount = cd.prepayAmount
-          #TODO update details for the active loan
+          activeloan.outstandingLoanBalance = activeloan.outstandingLoanBalance - amount
+          activeloan.save()
+          # Adds the payment to Payment model
+          payment = Payment(amount=amount, loan=activeLoan.loan, paymentType="prepayment", merchantUsed="none")
+          payment.save()
+
           return HttpResponseRedirect('/payPrepayment/thanks/')
   else:
       form = PrepaymentForm(loanId, initial = {'prepayAmount': outstandingAmount/2})
