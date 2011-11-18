@@ -127,32 +127,35 @@ def allLoans(request):
 
   for loan in loanList:
     if loan.isActive:
-      actDict.append({'id':actLoan.id,
-                    'name':actLoan.loan.name,
-                    'loanType':actLoan.loan.loanType,
-                    'principal':actLoan.loan.principal,
-                    'totalMonths':actLoan.loan.originalMonths,
-                    'dateTaken':actLoan.loan.dateTaken,
-                    'expTermination':actLoan.expectedDateOfTermination,
-                    'outstandingAmount':actLoan.outstandingLoanBalance,
-                    'monthsLeft':actLoan.loan.originalMonths - actLoan.elapsedMonths,
-                    'interestCategory':actLoan.loan.interestCategory,
-                    'interestRate':actLoan.interestRate,
-                    'monthlyInstallment':actLoan.monthlyInstallment,
-                    'nextDueInstallment':actLoan.nextInstallmentDueDate,
-                    'prepayPenalty':actLoan.prepaymentPenaltyRate,
-                    'security':actLoan.security})
+      actDict.append({'id':loan.id,
+                      'name':loan.name,
+                      'loanType':loan.loanType,
+                      'principal':loan.principal,
+                      'totalMonths':loan.originalMonths,
+                      'dateTaken':loan.dateTaken,
+                      'expTermination':loan.activeloan.expectedDateOfTermination,
+                      'outstandingAmount':loan.activeloan.outstandingLoanBalance,
+                      'monthsLeft':loan.originalMonths - loan.activeloan.elapsedMonths,
+                      'interestCategory':loan.interestCategory,
+                      'interestRate':loan.activeloan.interestRate,
+                      'monthlyInstallment':loan.activeloan.monthlyInstallment,
+                      'nextDueInstallment':loan.activeloan.nextInstallmentDueDate,
+                      'prepayPenalty':loan.activeloan.prepaymentPenaltyRate,
+                      'security':loan.security,
+                      'detailLink':"../loanDetails/"+str(loan.id),
+      })
     else:
-      compDict.append({'id':compLoan.id,
-                     'name':compLoan.loan.name,
-                     'loanType':compLoan.loan.loanType,
-                     'principal':compLoan.loan.principal,
-                     'totalMonths':compLoan.loan.originalMonths,
-                     'dateTaken':compLoan.loan.dateTaken,
-                     'dateOfCompletion':compLoan.dateOfCompletion,
-                     'totalAmountPaid':compLoan.totalAmountPaid,
-                     'interestCategory':compLoan.loan.interestCategory,
-                     'interestRate':compLoan.averageInterestRate})
+      compDict.append({'id':loan.id,
+                       'name':loan.name,
+                       'loanType':loan.loanType,
+                       'principal':loan.principal,
+                       'totalMonths':loan.originalMonths,
+                       'dateTaken':loan.dateTaken,
+                       'dateOfCompletion':loan.completedloan.dateOfCompletion,
+                       'totalAmountPaid':loan.completedloan.totalAmountPaid,
+                       'interestCategory':loan.interestCategory,
+                       'interestRate':loan.completedloan.averageInterestRate,
+      })
 
   return render_to_response('allLoans.html',locals())
 
@@ -165,7 +168,7 @@ def loanDetails(request,loanId):
   loan = Loan.objects.get(id=loanId)
 
   # Retrieve the payment list for a loan
-  paymentList = Payment.objects.filter(loan=id)
+  paymentList = Payment.objects.filter(loan=loanId)
   paymentDetails = []
   for payment in paymentList:
     paymentDetails.append({'amount':payment.amount,
@@ -174,7 +177,7 @@ def loanDetails(request,loanId):
                            'merchant':payment.merchantUsed,
     })
 
-  if (loan.isactive):
+  if (loan.isActive):
     activeLoan = loan.activeloan
     details = {'id':activeLoan.id,
                'name':activeLoan.loan.name,
