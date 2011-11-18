@@ -1,17 +1,96 @@
-<ol>
+﻿<!DOCTYPE html PUBLIC "-//W3C//Dth XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/Dth/xhtml1-transitional.dth">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Allotments</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+<h2>New Allotments</h2>
+<table class="long">
+<tr class="top-row">
+<th>Loan Name</th>
+<th>Loan type</th>
+<th>Amount sanction</th>
+<th>Interest type</th>
+<th>Interest Rate</th>
+<th>Allotment Date</th>
+<th>Application Date</th>
+<th>Applied amount</th>
+<th></th>
+</tr>
 {% for application in processedApplications %}
-    <li>{{ application }} <a href = "/allApplications/archive/{{application.id}}">Archive</a></li>
+	<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'"> 
+	<td>{{application.name}}</td>
+	<td>{{application.loanType}}</td>
+	<td>{{application.amountAllotted}}</td>
+	<td>{{application.interestCategory}}</td>
+	<td>{{application.interestRate}}</td>
+	<td>{{application.dateOfAllotment}}</td>
+	<td>{{application.dateApplied}}</td>
+	<td>{{application.amountAppliedFor}}</td>
+	<td><a href="{{application.archiveLink}}" id="button-link"><button>Archive</button></a></td>
+	</tr>
 {% endfor %}
-</ol>
+</table>
 
-<ol>
+<h2>Under Processing</h2>
+<table width="70%">
+<tr class="top-row">
+<th>Loan Name</th>
+<th>Loan type</th>
+<th>Applied Amount</th>
+<th>Application Date</th>
+<th>Status</th>
+<th>Remarks</th>
+<th></th>
+</tr>
 {% for application in underProcessingApplications %}
-    <li>{{ application }} <a href = "/allApplications/cancel/{{application.id}}">Cancel & Archive</a></li>
+	<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'"> 
+	<td>{{application.name}}</td>
+	<td>{{application.loanType}}</td>
+	<td>{{application.amountAppliedFor}}</td>
+	<td>{{application.dateApplied}}</td>
+	<td>{{application.status}}</td>
+	<td>{{application.remark}}</td>
+	<td><a href="{{application.cancelLink}}" id="button-link"><button>Cancel & Archive</button></a></td>
+	</tr>
 {% endfor %}
-</ol>
-
-<ol>
+</table>
+<h2>Archived Applications</h2>
+<table class="long">
+<tr class="top-row">
+<th>Loan Name</th>
+<th>Loan type</th>
+<th>Amount sanction</th>
+<th>Interest type</th>
+<th>Interest Rate</th>
+<th>Allotment Date</th>
+<th>Application Date</th>
+<th>Applied amount</th>
+</tr>
 {% for application in archivedApplications %}
-    <li>{{ application }}</li>
+	<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'"> 
+	<td>{{application.name}}</td>
+	<td>{{application.loanType}}</td>
+	{% ifequal application.status 'cancelled' %}
+	<td>N.A.</td>
+	<td>N.A.</td>
+	<td>N.A.</td>
+	<td>N.A.</td>
+	{% else %}
+	<td>{{application.amountAllotted}}</td>
+	<td>{{application.interestCategory}}</td>
+	<td>{{application.interestRate}}</td>
+	<td>{{application.dateOfAllotment}}</td>
+	{% endifequal %}
+	<td>{{application.dateApplied}}</td>
+	<td>{{application.amountAppliedFor}}</td>
+	</tr>
 {% endfor %}
-</ol>
+</table>
+</body>
+
+</html>

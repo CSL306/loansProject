@@ -1,11 +1,42 @@
-<ol>
-{% for installment in overdueInstallments %}
-    <li>{{ installment }} <a href="../payInstallment/{{installment.loan}}">Pay Now</a></li>
-{% endfor %}
-</ol>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-<ol>
-{% for installment in dueInstallments %}
-    <li>{{ installment }} <a href="../payInstallment/{{installment.loan}}">Pay Now</a></li>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Due Installments</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<h2>Due Installments</h2>
+<table class="long" cellpadding="4px;">
+{% for inst in overdueInstallments %}
+{% if forloop.first %}
+<tr class="top-row">
+<th>Loan Name</th>
+<th>Due Installment Amount</th>
+<th>Outstanding Loan Balance</th>
+<th>Due Date</th>
+<th></th>
+</tr>
+{% endif %}
+<tr class="overdue" onmouseover="this.className='overdue-over'" onmouseout="this.className='overdue'">
+<td>{{inst.loan}}</td>
+<td>{{inst.amount}}</td>
+<td></td>
+<td>{{inst.dueDate}}</td>
+<td><a href="../payInstallment/{{inst.loan}}" id="button-link"><button>Pay Now</button></a></td>
+</tr>
 {% endfor %}
-</ol>
+{% for inst in dueInstallments %}
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>{{inst.loan}}</td>
+<td>{{inst.amount}}</td>
+<td></td>
+<td>{{inst.dueDate}}</td>
+<td><a href="../payInstallment/{{inst.loan}}" id="button-link"><button>Pay Now</button></a></td>
+</tr>
+{% endfor %}
+</table>
+</body>
+
+</html>

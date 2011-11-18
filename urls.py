@@ -19,12 +19,19 @@ urlpatterns = patterns('',
     (r'^home/$', home),
     (r'^dueInstallments/$', dueInstallments),
     (r'^allApplications/$', allApplications),
-    (r'^allApplications/(archive)/(\d+)/$', cancelOrArchive),
-    (r'^allApplications/(cancel)/(\d+)/$', cancelOrArchive),
+    (r'^cancelOrArchive/(archive)/(\d+)/$', cancelOrArchive),
+    (r'^cancelOrArchive/(cancel)/(\d+)/$', cancelOrArchive),
     (r'^allLoans/$',allLoans),
     (r'^loanDetails/(\d+)/$',loanDetails),
     (r'^payInstallment/(\d+)/$', payInstallment),
 )
+
+urlpatterns += patterns('django.views.static',
+                        (r'^allApplications/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
+                        (r'^allLoans/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
+                        (r'^loanDetails/(\d+)/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
+                        (r'^dueInstallments/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}), )
+
 """
     (r'^applyForLoan/$', applyForLoan),
     (r'^applicationDetails/$', applicationDetails),

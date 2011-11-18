@@ -1,8 +1,66 @@
-<ol>
-<li>{{ details }}</li>
-</ol>
-<ol>
-{% for paymentDetail in paymentDetails %}
-    <li>{{ paymentDetail }}</li>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Completed Loan Details</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<h2>Loan Details</h2>
+<table class="vertical" cellpadding="6.5px">
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Loan Name</td>
+<td>{{details.name}}</td>
+</tr>
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Loan Type</td>
+<td>{{details.loanType}}</td>
+</tr>
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Principal Amount</td>
+<td>{{details.principal}}</td>
+</tr>
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Time Period (in months)</td>
+<td>{{details.totalMonths}}</td>
+</tr>
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Date Taken</td>
+<td>{{details.dateTaken}}</td>
+</tr>
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Interest Type</td>
+<td>{{details.interestCategory}}</td>
+</tr>
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Interest Rate</td>
+<td>{{details.interestRate}}</td>
+</tr>
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>Security</td>
+<td>{{details.security}}</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+<h3>Payment History</h3>
+<table class="long">
+<tr class="top-row">
+<th>Amount Paid</th>
+<th>Date of Payment</th>
+<th>Payment Type</th>
+<th>Merchant Used</th>
+</tr>
+{% for payment in paymentDetails %}
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>{{payment.amount}}</td>
+<td>{{payment.datePaid}}</td>
+<td>{{payment.type}}</td>
+<td>{{payment.merchant}}</td>
+</tr>
 {% endfor %}
-</ol>
+</table>
+</body>
+</html>
