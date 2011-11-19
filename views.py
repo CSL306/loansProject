@@ -155,7 +155,9 @@ def allLoans(request):
                        'dateOfCompletion':loan.completedloan.dateOfCompletion,
                        'totalAmountPaid':loan.completedloan.totalAmountPaid,
                        'interestCategory':loan.interestCategory,
-                       'averageInterestRate':loan.completedloan.averageInterestRate})
+                       'averageInterestRate':loan.completedloan.averageInterestRate,
+                       'detailLink':"../loanDetails/"+str(loan.id),
+      })
 
   return render_to_response('allLoans.html',locals())
 
