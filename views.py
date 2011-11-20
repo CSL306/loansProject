@@ -14,12 +14,13 @@ def getCustomerId(request):
 
 
 def home(request):
-  # Home page for a unsigned user.
+  """Home page for a unsigned user."""
+
   return render_to_response('home.html',locals())
 
 
 def dueInstallments(request):
-  # View for displaying all due installments for all loans of a customer.
+  """View for displaying all due and/or overdue installments for all loans of a customer."""
 
   # Get the customerId and verify if the session is active.
   customerID = getCustomerId(request)
@@ -53,8 +54,10 @@ def dueInstallments(request):
 
 
 def allApplications(request):
-  # View for displaying all the loan applications a customer has made.
-  # These applications include those which have been approved, rejected or are under consideration.
+  """
+     View for displaying all the loan applications a customer has made.
+     These applications include those which have been approved, rejected or are under consideration.
+  """
 
   # Get the customerId and verify if the session is active.
   customerID = getCustomerId(request)
@@ -109,6 +112,8 @@ def allApplications(request):
 
 
 def cancelOrArchive(request, cancelOrArchive, applicationID):
+  """View for cancelling or archiving an application. Redirects back to allApplications. """
+
   customerID = getCustomerId(request)
   if cancelOrArchive=="cancel":
     Application.objects.filter(id=applicationID).update(status="Cancelled", isArchived="True")
@@ -118,7 +123,8 @@ def cancelOrArchive(request, cancelOrArchive, applicationID):
 
 
 def allLoans(request):
-  # Show all loans for a customer.
+  """Show all loans for a customer."""
+
   # Get the customerId and verify if the session is active.
   customerID = getCustomerId(request)
 
@@ -163,7 +169,8 @@ def allLoans(request):
 
 
 def loanDetails(request,loanId):
-  # Display the loan details for a loanId
+  """Display the loan details for a loanId"""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
@@ -215,10 +222,11 @@ def loanDetails(request,loanId):
 
 
 def payInstallment(request, loanId):
+  """View for paying an installment"""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
-  # View for paying an installment
   activeLoan = ActiveLoan.objects.get(loan__id=loanId)
   dueDate = activeLoan.nextInstallmentDueDate
   installment = activeLoan.monthlyInstallment
@@ -227,7 +235,11 @@ def payInstallment(request, loanId):
 
 
 def payInstallmentThanks(request, loanId):
-  # Thank you page after the payment of an installment.
+  """
+     Updates the database with the payment details etc.
+     Redirects to thank you page after the payment of an installment.
+  """
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
@@ -255,11 +267,11 @@ def payInstallmentThanks(request, loanId):
 
 
 def newApplication(request):
-  # Files a new application.
+  """Files a new application."""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
-  # View for applying for a new loan.
   if request.method == 'POST':
       form = ApplicationForm(request.POST)
       if form.is_valid():
@@ -273,7 +285,8 @@ def newApplication(request):
 
 
 def newApplicationThanks(request):
-  # Thank you page after a new application request.
+  """Thank you page after a new application request."""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
@@ -281,7 +294,8 @@ def newApplicationThanks(request):
 
 
 def payPrepayment(request, loanId):
-  # Prepay an amount for a loan.
+  """Prepay an amount for a loan."""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
@@ -306,7 +320,8 @@ def payPrepayment(request, loanId):
 
 
 def payPrepaymentThanks(request):
-  # Thank you page after the payment of an installment.
+  """Thank you page after the payment of an installment."""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
@@ -314,7 +329,8 @@ def payPrepaymentThanks(request):
 
 
 def support(request):
-  # View for filing a support request.
+  """View for filing a support request."""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
@@ -331,18 +347,18 @@ def support(request):
 
 
 def supportThanks(request):
-  # Thank you page after a support request submission.
+  """Thank you page after a support request submission."""
+
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
   return render_to_response('supportThanks.html', locals())
 
 
-"""
-def paymentHistory(request):
+
+#def paymentHistory(request):
   # View for displaying the payment history.
 
 
-def payInstallment(request):
+#def payInstallment(request):
   # View for paying an installment.
-"""

@@ -2,8 +2,6 @@ from django.db import models
 from django.db.models import signals
 from django.db.models.signals import post_save
 
-# Create your models here.
-
 LOAN_TYPES = (
   ("Personal - Home", "Personal - Home"),
   ("Personal - Car", "Personal - Car"),
@@ -25,19 +23,21 @@ SECURITY_TYPES = (
 )
 
 class Customer(models.Model):
+  """Each customer of the bank is an instance of this class."""
   name = models.CharField(max_length=50)
   accountNumber = models.IntegerField()
-  customerType = models.CharField(max_length=20)
+  customerType = models.CharField(max_length=20) # Personal or Corporate
   creditRating = models.IntegerField()
 
   def __unicode__(self):
     return u'%s %s' % (self.accountNumber, self.name)
 
 class Loan(models.Model):
+  """Each loan a customer take is an instance of this class. A customer can be associated with one or more loans."""
   name = models.CharField(max_length=50)
   isActive = models.BooleanField()
   principal = models.DecimalField(max_digits=15, decimal_places=2)
-  originalMonths = models.IntegerField()
+  originalMonths = models.IntegerField() # The total time period of the loan
   interestCategory = models.CharField(max_length=10) # Fixed or Floating
   loanType = models.CharField(max_length=100, choices=LOAN_TYPES)
   dateTaken = models.DateTimeField(auto_now_add=True)
@@ -48,24 +48,25 @@ class Loan(models.Model):
     return u'%s' % (self.name)
 
 class ActiveLoan(models.Model):
+  """Each ActiveLoan is an instance of this class."""
   loan = models.OneToOneField(Loan)
   expectedDateOfTermination = models.DateTimeField()
   elapsedMonths = models.IntegerField()
   monthlyInstallment = models.DecimalField(max_digits=15, decimal_places=2)
-  interestRate = models.DecimalField(max_digits=6, decimal_places=2) # This is annual interest rate in percentage.
+  interestRate = models.DecimalField(max_digits=6, decimal_places=2) # This is the annual interest rate in percentage.
   prepaymentPenaltyRate = models.DecimalField(max_digits=6, decimal_places=2)
   outstandingLoanBalance = models.DecimalField(max_digits=15, decimal_places=2)
   nextInstallmentDueDate = models.DateTimeField()
 
   def computeMonthlyInstallment(self):
+    """Returns the monthly installment based on the current outstanding loan balance, monthly interest rate and remaining months."""
     monthlyInterestRate = self.interestRate/(100*12)
     remainingMonths = self.loan.originalMonths - self.elapsedMonths
-    if self.elapsedMonths != 0:
-      return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths)) / ((1+monthlyInterestRate)**(remainingMonths) - 1)
-    else:
-      return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths)) / ((1+monthlyInterestRate)**(remainingMonths) - 1)
+    return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths)) / ((1+monthlyInterestRate)**(remainingMonths) - 1)
 
   def computeOutstandingLoanBalance(self):
+    """Returns the balance outstanding after elapsedMonths have passed (assuming all installments were paid on time.)
+       Notes on usage: Call this function once after paying every installment (when you increase elapsedMonths). Set outstandingLoanBalance using the value returned by this function. After that use that variable to query the outstanding loan balance."""
     monthlyInterestRate = self.interestRate/(100*12)
     remainingMonths = self.loan.originalMonths - self.elapsedMonths
     if self.elapsedMonths != 0:
@@ -74,12 +75,14 @@ class ActiveLoan(models.Model):
       return self.loan.principal
 
   def save(self, *args, **kwargs):
-    #self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
+    """Updates monthlyInstallment and saves the entry"""
     self.monthlyInstallment = self.computeMonthlyInstallment()
     super(ActiveLoan, self).save(*args, **kwargs)
 
 def firstSaveHandler(sender, instance, created, *args, **kwargs):
   """
+     This function is used to set the outstanding loan balance and elapsed months when the loan object is created.
+     Argument Explanation:
      sender - The model class. (ActiveLoan)
      instance - The actual instance being saved.
      created - Boolean; True if a new record was created.
@@ -92,19 +95,22 @@ def firstSaveHandler(sender, instance, created, *args, **kwargs):
 post_save.connect(firstSaveHandler, sender=ActiveLoan)
 
 class CompletedLoan(models.Model):
+  """Record for every completed loan."""
   loan = models.OneToOneField(Loan)
   dateOfCompletion = models.DateTimeField(auto_now_add=True)
   totalAmountPaid = models.DecimalField(max_digits=15, decimal_places=2)
   averageInterestRate = models.DecimalField(max_digits=6, decimal_places=2)
 
 class Payment(models.Model):
+  """Record storing every transaction"""
   amount = models.DecimalField(max_digits=15, decimal_places=2)
   loan = models.ForeignKey(Loan)
-  paymentType = models.CharField(max_length=20) #prepayment/installment
+  paymentType = models.CharField(max_length=20) # Prepayment or Installment
   datePaid = models.DateTimeField(auto_now_add=True)
   merchantUsed = models.CharField(max_length=20)
 
 class OverdueInstallment(models.Model):
+  """This class stores all the installments which have passed their due dates and haven't been paid yet"""
   amount = models.DecimalField(max_digits=15, decimal_places=2)
   dueDate = models.DateTimeField()
   loan = models.ForeignKey(Loan)
@@ -113,6 +119,7 @@ class OverdueInstallment(models.Model):
     return u'%s' % (self.loan)
 
 class Application(models.Model):
+  """This stores information a user fills while applying for a new loan. This information is transferred to loan object once the application is approved."""
   name = models.CharField(max_length=50)
   loanType = models.CharField(max_length=100, choices=LOAN_TYPES)
   amountAppliedFor = models.DecimalField(max_digits=15, decimal_places=2)
@@ -125,10 +132,11 @@ class Application(models.Model):
   dateOfAllotment = models.DateTimeField()
   loan = models.ForeignKey(Loan, blank=True, null=True)
   status = models.CharField(max_length=20) # Active, Allotted, Rejected, Cancelled
-  isArchived = models.BooleanField()
+  isArchived = models.BooleanField() # User can archive the application if he doesn't want to see it again on his screen.
   remark = models.TextField()
 
 class SupportTicket(models.Model):
+  """This stores information about any complaint a user might have."""
   loan = models.ForeignKey(Loan, blank=True, null=True)
   complaintType = models.CharField(max_length=20, choices=COMPLAINT_TYPES)
   complaintMessage = models.TextField()
