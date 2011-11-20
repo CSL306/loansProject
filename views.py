@@ -250,7 +250,7 @@ def payInstallmentThanks(request, loanId):
     activeLoan.delete()
   else:
     activeLoan.elapsedMonths += 1
-    self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
+    activeLoan.outstandingLoanBalance = activeLoan.computeOutstandingLoanBalance()
     activeLoan.save()
 
 
