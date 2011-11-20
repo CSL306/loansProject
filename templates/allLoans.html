@@ -1,11 +1,78 @@
-<ol>
-{% for a in actDict %}
-    <li>{{ a }}</li>
-{% endfor %}
-</ol>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-<ol>
-{% for c in compDict %}
-    <li>{{ c }}</li>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>All Loans</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<h3>Current Loans</h3>
+<table class="long" cellpadding="4px" >
+<tr class="top-row">
+<th>Loan Name</th>
+<th>Loan Type</th>
+<th>Principal Amount</th>
+<th>Outstanding Amount</th>
+<th>Months Remaining</th>
+<th>Interest Type</th>
+<th>Interest Rate</th>
+<th>Monthly Installment</th>
+<th>Next Installment Due Date</th>
+<th>Security</th>
+<th>Details</th>
+<th>Prepay Penalty</th>
+<th></th>
+</tr>
+{% for a in actDict %}
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>{{a.name}}</td>
+<td>{{a.loanType}}</td>
+<td>{{a.principal}}</td>
+<td>{{a.outstandingLoanBalance}}</td>
+<td>{{a.monthsLeft}} of {{a.totalMonths}}</td>
+<td>{{a.interestCategory}}</td>
+<td>{{a.interestRate}}</td>
+<td>{{a.monthlyInstallment}}</td>
+<td>{{a.nextInstallmentDueDate}}</td>
+<td>{{a.security}}</td>
+<td><a href="{{a.detailLink}}">Details</a></td>
+<td>{{a.prepaymentPenaltyRate}}</td>
+<td width="10%"><button>Prepay Now</button></td>
+</tr>
 {% endfor %}
-</ol>
+</table>
+<h3>Completed Loans</h3>
+<table class="long" cellpadding="4px">
+<tr class="top-row">
+<th>Loan Name</th>
+<th>Loan Type</th>
+<th>Principal Amount</th>
+<th>Total Amount Paid</th>
+<th>Total Months</th>
+<th>Date Taken</th>
+<th>Completion Date</th>
+<th>Interest Type</th>
+<th>Average Interest Rate</th>
+<th>Details</th>
+</tr>
+
+{% for c in compDict %}
+<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
+<td>{{c.name}}</td>
+<td>{{c.loanType}}</td>
+<td>{{c.principal}}</td>
+<td>{{c.totalAmountPaid}}</td>
+<td>{{c.totalMonths}}</td>
+<td>{{c.dateTaken}}</td>
+<td>{{c.dateOfCompletion}}</td>
+<td>{{c.interestCategory}}</td>
+<td>{{c.averageInterestRate}}</td>
+<td><a href="{{c.detailLink}}">Details</a></td>
+</tr>
+{% endfor %}
+
+</table>
+</body>
+
+</html>

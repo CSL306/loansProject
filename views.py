@@ -77,7 +77,8 @@ def allApplications(request):
                                             'amountAppliedFor':application.amountAppliedFor,
                                             'dateApplied':application.dateApplied,
                                             'status':application.status,
-                                            'remark':application.remark})
+                                            'remark':application.remark,
+                                            'cancelLink':"/cancelOrArchive/cancel/"+str(application.id),})
       elif application.status == "Allotted" or application.status == "Rejected":
         processedApplications.append({'id':application.id,
                                       'name':application.name,
@@ -88,7 +89,8 @@ def allApplications(request):
                                       'interestCategory':application.interestCategory,
                                       'interestRate':application.interestRate,
                                       'amountAppliedFor':application.amountAppliedFor,
-                                      'dateApplied':application.dateApplied,})
+                                      'dateApplied':application.dateApplied,
+                                      'archiveLink':"/cancelOrArchive/archive/"+str(application.id),})
 
     else:
       archivedApplications.append({'id':application.id,
@@ -153,7 +155,9 @@ def allLoans(request):
                        'dateOfCompletion':loan.completedloan.dateOfCompletion,
                        'totalAmountPaid':loan.completedloan.totalAmountPaid,
                        'interestCategory':loan.interestCategory,
-                       'averageInterestRate':loan.completedloan.averageInterestRate})
+                       'averageInterestRate':loan.completedloan.averageInterestRate,
+                       'detailLink':"../loanDetails/"+str(loan.id),
+      })
 
   return render_to_response('allLoans.html',locals())
 
