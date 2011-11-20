@@ -246,6 +246,7 @@ def payInstallmentThanks(request, loanId):
     activeLoan.delete()
   else:
     activeLoan.elapsedMonths += 1
+    self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
     activeLoan.save()
 
 
@@ -287,7 +288,7 @@ def payPrepayment(request, loanId):
       form = PrepaymentForm(loanId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          amount = cd.prepayAmount
+          amount = cd.prepayAmount/(1+(activeLoan.prepaymentPenaltyRate/100))
           activeloan.outstandingLoanBalance = activeloan.outstandingLoanBalance - amount
           activeloan.save()
           # Adds the payment to Payment model

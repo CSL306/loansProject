@@ -61,7 +61,7 @@ class ActiveLoan(models.Model):
     monthlyInterestRate = self.interestRate/(100*12)
     remainingMonths = self.loan.originalMonths - self.elapsedMonths
     if self.elapsedMonths != 0:
-      return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths+1)) / ((1+monthlyInterestRate)**(remainingMonths+1) - 1)
+      return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths)) / ((1+monthlyInterestRate)**(remainingMonths) - 1)
     else:
       return (self.outstandingLoanBalance*monthlyInterestRate * (1+monthlyInterestRate)**(remainingMonths)) / ((1+monthlyInterestRate)**(remainingMonths) - 1)
 
@@ -74,8 +74,8 @@ class ActiveLoan(models.Model):
       return self.loan.principal
 
   def save(self, *args, **kwargs):
+    #self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
     self.monthlyInstallment = self.computeMonthlyInstallment()
-    self.outstandingLoanBalance = self.computeOutstandingLoanBalance()
     super(ActiveLoan, self).save(*args, **kwargs)
 
 def firstSaveHandler(sender, instance, created, *args, **kwargs):
