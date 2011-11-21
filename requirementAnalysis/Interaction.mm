@@ -1,0 +1,81 @@
+<map version="0.9.0">
+<!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
+<node BACKGROUND_COLOR="#e16464" CREATED="1315454240454" ID="ID_1535940779" MODIFIED="1315464654449" STYLE="bubble" TEXT="Interaction" VGAP="84">
+<font BOLD="true" NAME="SansSerif" SIZE="12"/>
+<node BACKGROUND_COLOR="#3644c4" COLOR="#fefefe" CREATED="1315463724491" HGAP="3" ID="ID_621548738" MODIFIED="1315485097198" POSITION="right" VSHIFT="26">
+<richcontent TYPE="NODE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      API offered
+    </p>
+  </body>
+</html></richcontent>
+<edge STYLE="linear"/>
+<cloud COLOR="#3644c4"/>
+<font BOLD="true" NAME="SansSerif" SIZE="12"/>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315463929938" ID="ID_723578746" MODIFIED="1315464486383" TEXT="Credit card">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315464105432" ID="ID_1934040042" MODIFIED="1315464521589" TEXT="Credit limit recommedation"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315463968264" ID="ID_321708497" MODIFIED="1315464469561" TEXT="Tax">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315464261789" ID="ID_1112679010" MODIFIED="1315464521587" TEXT="Give rebate data"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315473652232" ID="ID_25560666" MODIFIED="1315484812284" TEXT="Back office">
+<node BACKGROUND_COLOR="#019703" CREATED="1315473659975" ID="ID_1838766328" MODIFIED="1315473748273" TEXT="Loan payment history"/>
+<node BACKGROUND_COLOR="#019703" CREATED="1315473669185" ID="ID_486254898" MODIFIED="1315820956399" TEXT="Generation of potential loan takers"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315484684349" ID="ID_753319539" MODIFIED="1315820922792" STYLE="bubble" TEXT="Login/Accounts">
+<richcontent TYPE="NOTE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      Whoever is taking care of Web Transactions.
+    </p>
+  </body>
+</html></richcontent>
+<edge COLOR="#808080" STYLE="linear" WIDTH="thin"/>
+<node BACKGROUND_COLOR="#019703" CREATED="1315484692165" ID="ID_193929652" MODIFIED="1315484757154" STYLE="bubble" TEXT="Allow customers to pay off their loans using online banking.">
+<edge COLOR="#808080" STYLE="linear" WIDTH="thin"/>
+</node>
+</node>
+</node>
+<node BACKGROUND_COLOR="#3644c4" COLOR="#fefefe" CREATED="1315463760806" HGAP="11" ID="ID_1269880102" MODIFIED="1315473800501" POSITION="left" VSHIFT="49">
+<richcontent TYPE="NODE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      API required
+    </p>
+  </body>
+</html></richcontent>
+<edge STYLE="linear"/>
+<cloud COLOR="#3644c4"/>
+<font BOLD="true" NAME="SansSerif" SIZE="12"/>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315463796119" ID="ID_1672338308" MODIFIED="1315464469569" TEXT="Cheques">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315463994680" ID="ID_681049566" MODIFIED="1315464521571" TEXT="Cheque submission (validation and processing)"/>
+<node BACKGROUND_COLOR="#019703" CREATED="1315473608991" ID="ID_242538774" MODIFIED="1315473637896" TEXT="Cheque history"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315463854017" ID="ID_98819400" MODIFIED="1315464469564" TEXT="Financial management">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315464040210" ID="ID_1849760699" MODIFIED="1315464521572" TEXT="History"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315463904844" ID="ID_141424609" MODIFIED="1315484624126" TEXT="Credit card">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315464063849" ID="ID_658489304" MODIFIED="1315464521582" TEXT="Credit history"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315463915815" FOLDED="true" ID="ID_1619308533" MODIFIED="1315820901566" TEXT="Login">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315464084849" ID="ID_516064001" MODIFIED="1315464521584" TEXT="Identification"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315463923141" ID="ID_267639125" MODIFIED="1315464469549" TEXT="Accounts">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315464098174" ID="ID_1516424748" MODIFIED="1315464521585" TEXT="Account data"/>
+</node>
+<node BACKGROUND_COLOR="#f7f117" CREATED="1315464186633" ID="ID_1456187717" MODIFIED="1315464469548" TEXT="Administration">
+<node BACKGROUND_COLOR="#229f1b" CREATED="1315464194667" ID="ID_670727461" MODIFIED="1315464521586" TEXT="Redirect for customers (do the initial formalities)"/>
+</node>
+</node>
+</node>
+</map>
