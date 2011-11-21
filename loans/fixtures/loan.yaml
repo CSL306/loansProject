@@ -1,0 +1,166 @@
+-   fields: {accountNumber: 1, creditRating: 1000, customerType: Personal, name: TestCustomer}
+    model: loans.customer
+    pk: 1
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-17 21:19:03.050684', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Home, name: NewTestLoan1, originalMonths: 24,
+        principal: '10000', security: None}
+    model: loans.loan
+    pk: 1
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-17 23:58:39.724120', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Home, name: NewTestLoan2, originalMonths: 12,
+        principal: '20000', security: Vehicle}
+    model: loans.loan
+    pk: 2
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 00:08:00.253449', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Car, name: NewTestLoan3, originalMonths: 24,
+        principal: '40000', security: Vehicle}
+    model: loans.loan
+    pk: 3
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 00:13:32.583187', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Car, name: NewTestLoan4, originalMonths: 12,
+        principal: '10000', security: Vehicle}
+    model: loans.loan
+    pk: 4
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 00:18:41.935511', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Car, name: NewTestLoan5, originalMonths: 24,
+        principal: '40000', security: Vehicle}
+    model: loans.loan
+    pk: 5
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 01:01:51.631794', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Education, name: NewTestLoan6, originalMonths: 12,
+        principal: '10000', security: None}
+    model: loans.loan
+    pk: 6
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 01:06:39.649466', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Education, name: NewTestLoan7, originalMonths: 12,
+        principal: '10000', security: Vehicle}
+    model: loans.loan
+    pk: 7
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 01:12:01.575986', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Car, name: NewTestLoan8, originalMonths: 12,
+        principal: '10000', security: Vehicle}
+    model: loans.loan
+    pk: 8
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 01:13:46.553454', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Home, name: NewTestLoan9, originalMonths: 12,
+        principal: '10000', security: Vehicle}
+    model: loans.loan
+    pk: 9
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 01:17:38.162759', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Car, name: NewTestLoan10, originalMonths: 12,
+        principal: '10000', security: Vehicle}
+    model: loans.loan
+    pk: 10
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 01:32:06.306760', interestCategory: Fixed,
+        isActive: true, loanType: Personal - Car, name: NewTestLoan11, originalMonths: 12,
+        principal: '10000', security: Vehicle}
+    model: loans.loan
+    pk: 11
+-   fields: {customer: 1, dateTaken: !!timestamp '2011-11-18 17:34:29.951160', interestCategory: Floatin,
+        isActive: false, loanType: Personal - Home, name: NewTestLoan12, originalMonths: 12,
+        principal: '34321', security: None}
+    model: loans.loan
+    pk: 12
+-   fields: {elapsedMonths: 3, expectedDateOfTermination: !!timestamp '2011-11-17
+            23:56:49', interestRate: '10', loan: 1, monthlyInstallment: '0', nextInstallmentDueDate: !!timestamp '2011-11-17
+            23:57:04', outstandingLoanBalance: '0', prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 1
+-   fields: {elapsedMonths: 3, expectedDateOfTermination: !!timestamp '2011-11-17
+            23:58:07', interestRate: '10', loan: 2, monthlyInstallment: '0', nextInstallmentDueDate: !!timestamp '2011-11-17
+            23:58:54', outstandingLoanBalance: '0', prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 2
+-   fields: {elapsedMonths: 2, expectedDateOfTermination: !!timestamp '2011-11-18
+            00:08:07', interestRate: '10', loan: 3, monthlyInstallment: '0', nextInstallmentDueDate: !!timestamp '2011-11-18
+            00:08:17', outstandingLoanBalance: '0', prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 3
+-   fields: {elapsedMonths: 30, expectedDateOfTermination: !!timestamp '2011-11-18
+            00:13:38', interestRate: '12', loan: 4, monthlyInstallment: '0', nextInstallmentDueDate: !!timestamp '2011-11-18
+            00:13:51', outstandingLoanBalance: '0', prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 4
+-   fields: {elapsedMonths: 3, expectedDateOfTermination: !!timestamp '2011-11-18
+            00:18:46', interestRate: '10', loan: 5, monthlyInstallment: '0', nextInstallmentDueDate: !!timestamp '2011-11-18
+            00:18:57', outstandingLoanBalance: '40000', prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 5
+-   fields: {elapsedMonths: 1, expectedDateOfTermination: !!timestamp '2011-11-18
+            01:01:55', interestRate: '12', loan: 6, monthlyInstallment: '881.15',
+        nextInstallmentDueDate: !!timestamp '2011-11-18 01:02:38', outstandingLoanBalance: '8345.66',
+        prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 6
+-   fields: {elapsedMonths: 1, expectedDateOfTermination: !!timestamp '2011-11-18
+            01:06:41', interestRate: '12', loan: 7, monthlyInstallment: '964.54',
+        nextInstallmentDueDate: !!timestamp '2011-11-18 01:06:53', outstandingLoanBalance: '9135.46',
+        prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 7
+-   fields: {elapsedMonths: 0, expectedDateOfTermination: !!timestamp '2011-11-18
+            01:12:04', interestRate: '12', loan: 8, monthlyInstallment: '824.15',
+        nextInstallmentDueDate: !!timestamp '2011-11-18 01:12:14', outstandingLoanBalance: '10000',
+        prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 8
+-   fields: {elapsedMonths: 3, expectedDateOfTermination: !!timestamp '2011-11-18
+            01:13:51', interestRate: '12', loan: 9, monthlyInstallment: '872.35',
+        nextInstallmentDueDate: !!timestamp '2011-11-18 01:14:04', outstandingLoanBalance: '7380.35',
+        prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 9
+-   fields: {elapsedMonths: 2, expectedDateOfTermination: !!timestamp '2011-11-18
+            01:17:43', interestRate: '12', loan: 10, monthlyInstallment: '881.15',
+        nextInstallmentDueDate: !!timestamp '2011-11-18 01:17:54', outstandingLoanBalance: '8262.27',
+        prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 10
+-   fields: {elapsedMonths: 3, expectedDateOfTermination: !!timestamp '2011-11-18
+            01:32:09', interestRate: '12', loan: 11, monthlyInstallment: '888.49',
+        nextInstallmentDueDate: !!timestamp '2011-11-18 01:32:20', outstandingLoanBalance: '7610.8',
+        prepaymentPenaltyRate: '2'}
+    model: loans.activeloan
+    pk: 11
+-   fields: {averageInterestRate: '12', dateOfCompletion: !!timestamp '2011-11-18
+            17:34:35.516694', loan: 12, totalAmountPaid: '214321'}
+    model: loans.completedloan
+    pk: 1
+-   fields: {amount: '12312', datePaid: !!timestamp '2011-11-18 06:50:19.656354',
+        loan: 1, merchantUsed: VISA, paymentType: Installment}
+    model: loans.payment
+    pk: 1
+-   fields: {amount: '18821', datePaid: !!timestamp '2011-11-18 06:50:43.942284',
+        loan: 1, merchantUsed: VISA, paymentType: Installment}
+    model: loans.payment
+    pk: 2
+-   fields: {amount: '928342', datePaid: !!timestamp '2011-11-18 06:51:15.452388',
+        loan: 1, merchantUsed: MasterCard, paymentType: Prepayment}
+    model: loans.payment
+    pk: 3
+-   fields: {amount: '888', dueDate: !!timestamp '2011-11-18 02:18:36', loan: 6}
+    model: loans.overdueinstallment
+    pk: 1
+-   fields: {amount: '2321', dueDate: !!timestamp '2011-11-18 02:19:27', loan: 1}
+    model: loans.overdueinstallment
+    pk: 2
+-   fields: {amountAllotted: '10000', amountAppliedFor: '10000', customer: 1, dateApplied: !!timestamp '2011-11-18
+            02:22:44.568002', dateOfAllotment: !!timestamp '2011-11-18 02:22:12',
+        interestCategory: Fixed, interestRate: '12', isArchived: true, loan: 6, loanType: Personal
+            - Education, name: TestApplication1, remark: Good, security: None, status: Allotted}
+    model: loans.application
+    pk: 1
+-   fields: {amountAllotted: '0', amountAppliedFor: '21341', customer: 1, dateApplied: !!timestamp '2011-11-18
+            02:23:52.529576', dateOfAllotment: !!timestamp '2011-11-18 02:23:33',
+        interestCategory: Fixed, interestRate: '10', isArchived: true, loan: null,
+        loanType: Personal - Car, name: TestApplication2, remark: Prerwef, security: None,
+        status: Cancelled}
+    model: loans.application
+    pk: 2
+-   fields: {amountAllotted: '21321', amountAppliedFor: '23121', customer: 1, dateApplied: !!timestamp '2011-11-18
+            18:07:41.559156', dateOfAllotment: !!timestamp '2011-11-18 18:07:19',
+        interestCategory: Floating, interestRate: '12', isArchived: true, loan: null,
+        loanType: Personal - Home, name: TestX, remark: fdjglkdfglkfjgk, security: None,
+        status: Allotted}
+    model: loans.application
+    pk: 3
