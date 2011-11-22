@@ -1,12 +1,7 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+{% extends 'base.html' %}
 
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-<title>All Loans</title>
-<link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
+{% block title %}All Loans{% endblock %}
+{% block content %}
 <h3>Current Loans</h3>
 <table class="long" cellpadding="4px" >
 <tr class="top-row">
@@ -73,6 +68,4 @@
 {% endfor %}
 
 </table>
-</body>
-
-</html>
+{% endblock %}

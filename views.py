@@ -110,6 +110,28 @@ def allApplications(request):
 
   return render_to_response('allApplications.html', locals())
 
+def allPayments(request):
+	
+	# Get customer id and verify is the session is active
+	customer_id = getCustomerId(request)
+	
+	# Get all the loans for the customer using the customer_id
+	loansList = Loan.objects.filter(customer=customer_id)
+	
+	#the list to be returned
+	paymentsList = []
+	
+	#loop over all the loans of the customer and get payments for every loan
+	for l in loansList:
+			paymentsList += Payment.objects.filter(loan = l)	#add the list of payments corresponding to every loan to paymentsList
+			
+	#the following function is defined for use with the sorted method
+	def getdatePaid(payment):
+		return payment.datePaid
+		
+	#sort the payments reverse chronologically
+	paymentsList = sorted(paymentsList, key=getdatePaid, reverse=True)
+	return render_to_response('allPayments.html', locals())
 
 def cancelOrArchive(request, cancelOrArchive, applicationID):
   """View for cancelling or archiving an application. Redirects back to allApplications. """

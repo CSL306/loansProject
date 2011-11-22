@@ -1,12 +1,9 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-<title>Active Loan Details</title>
-<link rel="stylesheet" type="text/css" href="style.css" />
+{% extends 'base.html' %}
+{% block title %}Active Loan Details{% endblock %}
+<!--<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
-<body>
+<body>-->
+{% block content %}
 <h2>Loan Details</h2>
 <h3>Your Loan of {{details.principal}}<br/>at Rs{{details.monthlyInstallment}}  per months<br/> for next {{details.monthsLeft}} months</h3>
 <table class="vertical" cellpadding="6.5px">
@@ -83,5 +80,5 @@
 </tr>
 {% endfor %}
 </table>
-</body>
-</html>
+{% endblock %}
+

@@ -1,13 +1,7 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+﻿{% extends 'base.html' %}
+{% block title %}Payments{% endblock %}
 
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-<title>Completed Loan Details</title>
-<link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
-<h2>Loan Details</h2>
+{% block content %}<h2>Completed Loan Details</h2>
 <table class="vertical" cellpadding="6.5px">
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
 <td>Loan Name</td>
@@ -62,5 +56,4 @@
 </tr>
 {% endfor %}
 </table>
-</body>
-</html>
+{% endblock %}
