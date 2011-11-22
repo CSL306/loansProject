@@ -1,3 +1,5 @@
 *.pyc
 *.py~
 *~
+sqlite.db
+sqlite.db.bak
