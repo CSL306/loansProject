@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//Dth XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/Dth/xhtml1-transitional.dth">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Payments</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+<h2>All Payments</h2>
+<table class="long">
+<tr class="top-row">
+<th>Loan Name</th>
+<th>Amount Paid</th>
+<th>Payment Type</th>
+<th>Payment Date</th>
+<th>Merchant</th>
+<th></th>
+</tr>
+{% for payment in paymentsList %}
+	<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'"> 
+	<td>{{payment.loan}}</td>
+	<td>{{payment.amount}}</td>
+	<td>{{payment.paymentType}}</td>
+	<td>{{payment.datePaid}}</td>
+	<td>{{payment.MerchantUsed}}</td>
+	</tr>
+{% endfor %}
+
+</table>
+
+</body>
+
+</html>
