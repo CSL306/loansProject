@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" type="text/css" href="Style.css" />
+	</head>
+	<body>
+		
+			<span id="apply_button"><a href="/newApplication" id="top_button">Apply for<br>a new loan</a></span>
+			<div id="topbar"><div id="banner">
+				<object width="728" height="90">
+				<param name="movie" value="flashvortex.swf">
+				<embed src="flashvortex.swf" width="728" height="90">
+				</embed>
+				</object></div>
+		</div>
+		
+		<div id="sidebar">
+			<div id="button1"><a href="/dueInstallments" id="side_button_1">Due Installments</a></div>
+			<div id="button2"><a href="/allLoans" id="side_button_2">All Loans</a></div>
+			<div id="button2"><a href="/allApplications" id="side_button_3">Active Applications</a></div>
+			<div id="button2"><a href="/allPayments" id="side_button_4">Payment History</a></div>
+		</div>
+		<div id="content">
+		{% block content %}{% endblock %}
+		</div>
+	</body>
+</html>
