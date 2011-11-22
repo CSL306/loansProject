@@ -1,5 +1,8 @@
 from django.conf.urls.defaults import *
 from loansProject.views import *
+from loansProject.resources import *
+from djangorestframework.views import *
+
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,7 +18,31 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-    
+
+    (r'^api/Loan/$', ListModelView.as_view(resource=LoanResource)),
+    (r'^api/Loan/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=LoanResource)),
+
+    (r'^api/Customer/$', ListModelView.as_view(resource=CustomerResource)),
+    (r'^api/Customer/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=CustomerResource)),
+
+    (r'^api/ActiveLoan/$', ListModelView.as_view(resource=ActiveLoanResource)),
+    (r'^api/ActiveLoan/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=ActiveLoanResource)),
+
+    (r'^api/CompletedLoan/$', ListModelView.as_view(resource=CompletedLoanResource)),
+    (r'^api/CompletedLoan/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=CompletedLoanResource)),
+
+    (r'^api/Payment/$', ListModelView.as_view(resource=PaymentResource)),
+    (r'^api/Payment/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=PaymentResource)),
+
+    (r'^api/OverdueInstallment/$', ListModelView.as_view(resource=OverdueInstallmentResource)),
+    (r'^api/OverdueInstallment/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=OverdueInstallmentResource)),
+
+    (r'^api/Application/$', ListModelView.as_view(resource=ApplicationResource)),
+    (r'^api/Application/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=ApplicationResource)),
+
+    (r'^api/SupportTicket/$', ListModelView.as_view(resource=SupportTicketResource)),
+    (r'^api/SupportTicket/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=SupportTicketResource)),
+
     (r'^home/$', home),
     (r'^dueInstallments/$', dueInstallments),
     (r'^allApplications/$', allApplications),
