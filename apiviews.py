@@ -8,6 +8,24 @@ class InstanceReadOnlyModelView(InstanceMixin, ReadModelMixin, ModelView):
   """A view which provides default operations for read against a model instance."""
   _suffix = 'Instance'
 
+class ActiveLoans(View):
+  """
+  This is an API function which takes customer id as the parameter and returns all the active loans of that particular customer. 
+  Format of URL: http://localhost:8000/api/activeLoan/<customer_id>/
+  Examples: http://localhost:8000/api/activeLoan/1/
+  """
+  def get(self, request, cust_id):
+    l = Loan.objects.filter(customer=cust_id) 
+    ActiveLoansList = []
+    for lo in l:
+             ActiveLoansList.extend(ActiveLoan.objects.filter(loan=lo))
+    print ActiveLoansList
+    result=[]
+    for loan in ActiveLoansList:
+      result.append(loan.serialize());  #serialize all the payment objects so that they can be converted to JSON
+    return result  #convert to JSON
+
+
 
 class PaymentsBetween(View):
   """
