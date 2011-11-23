@@ -57,6 +57,14 @@
   <div class="section" id="module-apiviews">
 <span id="apiviews"></span><h1>apiviews<a class="headerlink" href="#module-apiviews" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
+<dt id="apiviews.ActiveLoans">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">ActiveLoans</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#apiviews.ActiveLoans" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an API function which takes customer id as the parameter and returns all the active loans of that particular customer.</p>
+<p>Format of URL: <a class="reference external" href="http://localhost:8000/api/activeLoan">http://localhost:8000/api/activeLoan</a>/&lt;customer_id&gt;/</p>
+<p>Examples: <a class="reference external" href="http://localhost:8000/api/activeLoan/1/">http://localhost:8000/api/activeLoan/1/</a></p>
+</dd></dl>
+
+<dl class="class">
 <dt id="apiviews.Defaulters">
 <em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">Defaulters</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#Defaulters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.Defaulters" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class defines customers with more than 2 overdue installments as defaulters and returns a list of all such customers.</p>

@@ -10,12 +10,14 @@ class InstanceReadOnlyModelView(InstanceMixin, ReadModelMixin, ModelView):
 
 class ActiveLoans(View):
   """
-  This is an API function which takes customer id as the parameter and returns all the active loans of that particular customer. 
+  This is an API function which takes customer id as the parameter and returns all the active loans of that particular customer.
+  
   Format of URL: http://localhost:8000/api/activeLoan/<customer_id>/
+  
   Examples: http://localhost:8000/api/activeLoan/1/
   """
   def get(self, request, cust_id):
-    l = Loan.objects.filter(customer=cust_id) 
+    l = Loan.objects.filter(customer=cust_id)
     ActiveLoansList = []
     for lo in l:
              ActiveLoansList.extend(ActiveLoan.objects.filter(loan=lo))
