@@ -1,30 +1,26 @@
 from djangorestframework.resources import *
 from loans.models import *
 
-from djangorestframework.renderers import JSONRenderer
-
 class LoanResource(ModelResource):
-    model = Loan
+  model = Loan
 
 class CustomerResource(ModelResource):
-    model = Customer
+  model = Customer
 
 class ActiveLoanResource(ModelResource):
-    model = ActiveLoan
+  model = ActiveLoan
 
 class CompletedLoanResource(ModelResource):
-    model = CompletedLoan
+  model = CompletedLoan
 
 class PaymentResource(ModelResource):
-    model = Payment
+  model = Payment
 
 class OverdueInstallmentResource(ModelResource):
-    model = OverdueInstallment
+  model = OverdueInstallment
 
 class ApplicationResource(ModelResource):
-    model = Application
+  model = Application
 
 class SupportTicketResource(ModelResource):
-    model = SupportTicket
-    
-
+  model = SupportTicket

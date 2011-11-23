@@ -5,6 +5,7 @@ from externalapis import *
 from loans.models import *
 from djangorestframework.views import View;
 import datetime;
+
 def getCustomerId(request):
   return 1
   #sessionId = request.session.get("id","none")
@@ -376,6 +377,7 @@ def supportThanks(request):
   customerId = getCustomerId(request)
 
   return render_to_response('supportThanks.html', locals())
+<<<<<<< HEAD
 
 #The following classes are to provide an API using the djangorestframework
 
@@ -524,3 +526,5 @@ class MonthlyInstallment(View):
 
 
 
+=======
+>>>>>>> origin
