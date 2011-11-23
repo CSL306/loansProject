@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 from loansProject.views import *
 from loansProject.resources import *
 from djangorestframework.views import *
+from djangorestframework.renderers import JSONRenderer;
 
 
 # Uncomment the next two lines to enable the admin:
@@ -18,7 +19,15 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
-
+    (r'^api/paymentsBetween/(?P<cust_id>\d+)/$', PaymentsBetween.as_view()),
+		(r'^api/paymentsBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/$', PaymentsBetween.as_view()),
+		(r'^api/paymentsBetween/(?P<cust_id>\d+)/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
+		(r'^api/paymentsBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
+		(r'^api/paymentHistoryOfLoan/(?P<cust_id>\d+)/(?P<lname>[a-zA-Z0-9]+)/$', PaymentHistoryOfLoan.as_view()),
+		(r'^api/defaulters/$', Defaulters.as_view()),
+		(r'^api/paymentHistoryAllLoans/(?P<cust_id>\d+)/$', PaymentHistoryAllLoans.as_view()),
+		(r'^api/monthlyInstallment/(?P<cust_id>\d+)/$', MonthlyInstallment.as_view()),
+	
     (r'^api/Loan/$', ListModelView.as_view(resource=LoanResource)),
     (r'^api/Loan/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=LoanResource)),
 

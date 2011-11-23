@@ -1,5 +1,7 @@
-from djangorestframework.resources import ModelResource
+from djangorestframework.resources import *
 from loans.models import *
+
+from djangorestframework.renderers import JSONRenderer
 
 class LoanResource(ModelResource):
     model = Loan
@@ -24,3 +26,5 @@ class ApplicationResource(ModelResource):
 
 class SupportTicketResource(ModelResource):
     model = SupportTicket
+    
+
