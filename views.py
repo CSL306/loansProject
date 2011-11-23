@@ -39,10 +39,10 @@ def dueInstallments(request):
     for oi in ois:
       overdueInstallments.append({'amount':oi.amount,
                                   'dueDate':oi.dueDate,
-                                  'loan':oi.loan_id})
+                                  'loan':oi.loan.name})
     di = {'amount':activeLoan.activeloan.monthlyInstallment,
           'dueDate':activeLoan.activeloan.nextInstallmentDueDate,
-          'loan':activeLoan.activeloan.id}
+          'loan':activeLoan.name}
     dueInstallments.append(di)
 
   def getDueDate(installment):
