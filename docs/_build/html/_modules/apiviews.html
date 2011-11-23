@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apiviews &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for apiviews</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">djangorestframework.views</span> <span class="kn">import</span> <span class="n">ModelView</span><span class="p">,</span> <span class="n">View</span><span class="p">;</span>
+<span class="kn">from</span> <span class="nn">djangorestframework.mixins</span> <span class="kn">import</span> <span class="n">ReadModelMixin</span><span class="p">,</span> <span class="n">InstanceMixin</span>
+<span class="kn">from</span> <span class="nn">loans.models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span><span class="p">;</span>
+
+<div class="viewcode-block" id="InstanceReadOnlyModelView"><a class="viewcode-back" href="../apiviews.html#apiviews.InstanceReadOnlyModelView">[docs]</a><span class="k">class</span> <span class="nc">InstanceReadOnlyModelView</span><span class="p">(</span><span class="n">InstanceMixin</span><span class="p">,</span> <span class="n">ReadModelMixin</span><span class="p">,</span> <span class="n">ModelView</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A view which provides default operations for read against a model instance.&quot;&quot;&quot;</span>
+  <span class="n">_suffix</span> <span class="o">=</span> <span class="s">&#39;Instance&#39;</span>
+
+</div>
+<div class="viewcode-block" id="PaymentsBetween"><a class="viewcode-back" href="../apiviews.html#apiviews.PaymentsBetween">[docs]</a><span class="k">class</span> <span class="nc">PaymentsBetween</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This is an API function which takes customer id, start date (optional) and end date (optional) and returns a JSON object containing a list of all the payments made by the customer between start and end date.</span>
+<span class="sd">  If start data is missing, it returns all payments made BEFORE the end date.</span>
+<span class="sd">  If end date is missing, it returns all payments made AFTER start date.</span>
+<span class="sd">  If both are missing, it returns all payments made by the customer.</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/paymentsBetween/&lt;customer_id&gt;/&lt;start_date&gt;/&lt;end_date&gt;</span>
+
+<span class="sd">  &lt;start_date&gt;: s&lt;date&gt;</span>
+
+<span class="sd">  &lt;end_date&gt;: e&lt;date&gt;</span>
+
+<span class="sd">  &lt;date&gt;:ddmmyyyy</span>
+
+<span class="sd">  &lt;start_date&gt; and &lt;end_date&gt; are optional</span>
+
+<span class="sd">  Examples:</span>
+
+<span class="sd">  http://localhost:8000/api/paymentsBetween/1</span>
+
+<span class="sd">  http://localhost:8000/api/paymentsBetween/1/s17112011</span>
+
+<span class="sd">  http://localhost:8000/api/paymentsBetween/1/e19112011</span>
+
+<span class="sd">  http://localhost:8000/api/paymentsBetween/1/s17112011/e19112011</span>
+
+<span class="sd">  Note: Don&#39;t reverse the order of &lt;start_date&gt; and &lt;end_date&gt;</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="c"># start and end are in ddmmyyyy format</span>
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">cust_id</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="c"># Get all the loans for the customer using the customer_id</span>
+    <span class="n">loansList</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">cust_id</span><span class="p">)</span>
+
+    <span class="c">#parse the url to get start date and end date</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">datearg</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datearg</span><span class="p">)</span><span class="o">%</span><span class="mi">10000</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datearg</span><span class="p">)</span><span class="o">/</span><span class="mi">10000</span><span class="p">)</span><span class="o">%</span><span class="mi">100</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datearg</span><span class="p">)</span><span class="o">/</span><span class="mi">1000000</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">start</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="n">start</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">end</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="n">end</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+
+    <span class="n">paymentsList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#loop over all the loans of the customer and get payments for every loan</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">start</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+        <span class="n">paymentsList</span> <span class="o">+=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span>  <span class="c">#add the list of payments corresponding to every loan to paymentsList</span>
+
+    <span class="k">elif</span> <span class="p">(</span><span class="n">start</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+        <span class="n">paymentsList</span> <span class="o">+=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">datePaid__lt</span><span class="o">=</span><span class="n">start</span><span class="p">)</span>  <span class="c">#excludes payments made BEFORE the start date</span>
+
+    <span class="k">elif</span> <span class="p">(</span><span class="n">start</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+        <span class="n">paymentsList</span> <span class="o">+=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">datePaid__gt</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>  <span class="c">#excludes payments made AFTER the end date</span>
+
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+        <span class="n">paymentsList</span> <span class="o">+=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">datePaid__gt</span><span class="o">=</span><span class="n">end</span><span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">datePaid__lt</span><span class="o">=</span><span class="n">start</span><span class="p">)</span>  <span class="c">#excludes payments made before the start date and after the end date</span>
+
+    <span class="n">result</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">payment</span> <span class="ow">in</span> <span class="n">paymentsList</span><span class="p">:</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payment</span><span class="o">.</span><span class="n">serialize</span><span class="p">());</span>  <span class="c">#serialize all the payment objects so that they can be converted to JSON</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="PaymentHistoryOfLoan"><a class="viewcode-back" href="../apiviews.html#apiviews.PaymentHistoryOfLoan">[docs]</a><span class="k">class</span> <span class="nc">PaymentHistoryOfLoan</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class takes a customer id and loan name and returns all the payments corresponding to that loan</span>
+<span class="sd">  Format of URL: http://localhost:8000/api/paymentHistoryOfLoan/&lt;customer_id&gt;/&lt;loan_name&gt;</span>
+
+<span class="sd">  Examples: http://localhost:8000/api/paymentHistoryOfLoan/1/NewTestLoan1</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">cust_id</span><span class="p">):</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">cust_id</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">lname</span><span class="p">)</span>  <span class="c">#get all loans with the given customer id and name</span>
+
+    <span class="n">paymentsList</span> <span class="o">=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span>  <span class="c">#get all the payments associated with that loan</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">payment</span> <span class="ow">in</span> <span class="n">paymentsList</span><span class="p">:</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payment</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>  <span class="c">#serialize all the payment objects</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="Defaulters"><a class="viewcode-back" href="../apiviews.html#apiviews.Defaulters">[docs]</a><span class="k">class</span> <span class="nc">Defaulters</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class defines customers with more than 2 overdue installments as defaulters and returns a list of all such customers.</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/defaulters</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+
+    <span class="n">overdue</span> <span class="o">=</span> <span class="n">OverdueInstallment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>  <span class="c">#get all the overdue installments</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ins</span> <span class="ow">in</span> <span class="n">overdue</span><span class="p">:</span>
+      <span class="n">users</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ins</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">customer</span><span class="p">)</span>  <span class="c">#for every overdue installment, get the associated loan and the customer associated with that loan</span>
+
+    <span class="n">defaulters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">users</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">):</span>  <span class="c">#condition for being a defaulter</span>
+        <span class="n">defaulters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">defaulter</span> <span class="ow">in</span> <span class="n">defaulters</span><span class="p">:</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defaulter</span><span class="p">)</span>  <span class="c">#serialize all the customer objects</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="PaymentHistoryAllLoans"><a class="viewcode-back" href="../apiviews.html#apiviews.PaymentHistoryAllLoans">[docs]</a><span class="k">class</span> <span class="nc">PaymentHistoryAllLoans</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Format of URL: http://localhost:8000/api/paymentHistoryAllLoans/&lt;customer_id&gt;</span>
+
+<span class="sd">  Example: http://localhost:8000/api/paymentHistoryAllLoans/1</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">cust_id</span><span class="p">):</span>
+    <span class="c"># Get all the loans for the customer using the customer_id</span>
+    <span class="n">loansList</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">cust_id</span><span class="p">)</span>
+
+    <span class="c">#the list to be returned</span>
+    <span class="n">paymentsList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#loop over all the loans of the customer and get payments for every loan</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+      <span class="n">paymentsList</span> <span class="o">+=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span>  <span class="c">#add the list of payments corresponding to every loan to paymentsList</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">payment</span> <span class="ow">in</span> <span class="n">paymentsList</span><span class="p">:</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payment</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>  <span class="c">#serialize</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="MonthlyInstallment"><a class="viewcode-back" href="../apiviews.html#apiviews.MonthlyInstallment">[docs]</a><span class="k">class</span> <span class="nc">MonthlyInstallment</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class gives all the monthly installments of all the loans of a given customer.</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/monthlyInstallment/&lt;customer_id&gt;</span>
+
+<span class="sd">  Example: http://localhost:8000/api/monthlyInstallment/1</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">cust_id</span><span class="p">):</span>
+
+    <span class="n">loansList</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">cust_id</span><span class="p">,</span> <span class="n">isActive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>  <span class="c">#get active loan objects</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+      <span class="n">activeLoan</span> <span class="o">=</span> <span class="n">ActiveLoan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span>  <span class="c">#for every loan, get the corresponding active loan</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;cust_id&#39;</span><span class="p">:</span> <span class="n">l</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;loanType&#39;</span><span class="p">:</span> <span class="n">l</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span> <span class="s">&#39;MonthlyInstallment&#39;</span><span class="p">:</span> <span class="n">activeLoan</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">monthlyInstallment</span><span class="p">,</span> <span class="s">&#39;DueDate&#39;</span><span class="p">:</span> <span class="n">activeLoan</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nextInstallmentDueDate</span><span class="p">,})</span>  <span class="c">#serialize</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="LoansTakenBetween"><a class="viewcode-back" href="../apiviews.html#apiviews.LoansTakenBetween">[docs]</a><span class="k">class</span> <span class="nc">LoansTakenBetween</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This method gives all the loans taken by a given customer between a given (optional) start date and a given (optional) end date.</span>
+<span class="sd">  If start data is missing, it returns all loans taken BEFORE the end date.</span>
+<span class="sd">  If end date is missing, it returns all loans taken AFTER start date.</span>
+<span class="sd">  If both are missing, it returns all loans taken by the customer.</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/loansTakenBetween/&lt;customer_id&gt;/&lt;start_date&gt;/&lt;end_date&gt;</span>
+
+<span class="sd">  &lt;start_date&gt;: s&lt;date&gt;</span>
+
+<span class="sd">  &lt;end_date&gt;: e&lt;date&gt;</span>
+
+<span class="sd">  &lt;date&gt;: ddmmyyyy</span>
+
+<span class="sd">  &lt;start_date&gt; and &lt;end_date&gt; are optional.</span>
+
+<span class="sd">  Examples: http://localhost:8000/api/loansTakenBetween/1</span>
+
+<span class="sd">  http://localhost:8000/api/loansTakenBetween/1/s17112011</span>
+
+<span class="sd">  http://localhost:8000/api/loansTakenBetween/1/e19112011</span>
+
+<span class="sd">  http://localhost:8000/api/loansTakenBetween/1/s17112011/e19112011</span>
+
+<span class="sd">  Note: Don&#39;t reverse the order of &lt;start_date&gt; and &lt;end_date&gt;</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">cust_id</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+    <span class="c">#get all loans taken by the customer</span>
+    <span class="n">loansList</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">cust_id</span><span class="p">)</span>
+
+    <span class="c">#parse the url to get start date and end date</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">datearg</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datearg</span><span class="p">)</span><span class="o">%</span><span class="mi">10000</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datearg</span><span class="p">)</span><span class="o">/</span><span class="mi">10000</span><span class="p">)</span><span class="o">%</span><span class="mi">100</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">datearg</span><span class="p">)</span><span class="o">/</span><span class="mi">1000000</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">start</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="n">start</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">end</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="n">end</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+
+    <span class="n">loansListFiltered</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#filter loans based on start date and end date</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">start</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="n">loansListFiltered</span> <span class="o">=</span> <span class="n">loansList</span>
+
+    <span class="k">elif</span> <span class="p">(</span><span class="n">start</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="n">loansListFiltered</span> <span class="o">=</span> <span class="n">loansList</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">dateTaken__lt</span><span class="o">=</span><span class="n">start</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="p">(</span><span class="n">start</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">end</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="n">loansListFiltered</span> <span class="o">=</span> <span class="n">loansList</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">dateTaken__gt</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">loansListFiltered</span> <span class="o">=</span> <span class="n">loansList</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">dateTaken__lt</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">dateTaken__gt</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+
+    <span class="n">result</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">loan</span> <span class="ow">in</span> <span class="n">loansListFiltered</span><span class="p">:</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loan</span><span class="o">.</span><span class="n">serialize</span><span class="p">());</span>  <span class="c">#serialize all the loan objects so that they can be converted to JSON</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="LoansWithOverdueInstallments"><a class="viewcode-back" href="../apiviews.html#apiviews.LoansWithOverdueInstallments">[docs]</a><span class="k">class</span> <span class="nc">LoansWithOverdueInstallments</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class takes a customer_id (optional) and returns all the loans taken by the customer which have overdue installments. It returns all loans with overdue installments in case there is no customer_id.</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/loansWithOverdueInstallments/&lt;customer_id&gt;</span>
+
+<span class="sd">  Examples: http://localhost:8000/api/loansWithOverdueInstallments</span>
+
+<span class="sd">  http://localhost:8000/api/loansWithOverdueInstallments/1</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">cust_id</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+
+    <span class="c">#get all the overdue installments</span>
+    <span class="n">overdueInstallments</span> <span class="o">=</span> <span class="n">OverdueInstallment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">loansList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c">#loop over all the overdue installments to get corresponding loans</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">cust_id</span> <span class="o">==</span> <span class="bp">None</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">oi</span> <span class="ow">in</span> <span class="n">overdueInstallments</span><span class="p">:</span>
+        <span class="n">loansList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oi</span><span class="o">.</span><span class="n">loan</span><span class="p">)</span>
+
+    <span class="c">#filter loans according to customer_id</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">oi</span> <span class="ow">in</span> <span class="n">overdueInstallments</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">oi</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">cust_id</span><span class="p">)):</span>
+          <span class="n">loansList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oi</span><span class="o">.</span><span class="n">loan</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">loan</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loan</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>  <span class="c">#serialize the loan objects</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="LoanHistory"><a class="viewcode-back" href="../apiviews.html#apiviews.LoanHistory">[docs]</a><span class="k">class</span> <span class="nc">LoanHistory</span><span class="p">(</span><span class="n">View</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class takes a customer id and returns all the loans taken by that customer.</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/loanHistory/&lt;customer_id&gt;</span>
+
+<span class="sd">  Example: http://localhost:8000/api/loanHistory/1</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">cust_id</span><span class="p">):</span>
+
+    <span class="c">#get all loans taken by the customer</span>
+    <span class="n">loansList</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span> <span class="o">=</span> <span class="n">cust_id</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">loan</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+      <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loan</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>  <span class="c">#serialize the loan objects</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

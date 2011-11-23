@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>views &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="index.html" />
+    <link rel="next" title="apiviews" href="apiviews.html" />
+    <link rel="prev" title="loans.models" href="loans.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="apiviews.html" title="apiviews"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="loans.html" title="loans.models"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">LoansProject 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-views">
+<span id="views"></span><h1>views<a class="headerlink" href="#module-views" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="views.allApplications">
+<tt class="descclassname">views.</tt><tt class="descname">allApplications</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#allApplications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.allApplications" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for displaying all the loan applications a customer has made.
+These applications include those which have been approved, rejected or are under consideration.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.allLoans">
+<tt class="descclassname">views.</tt><tt class="descname">allLoans</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#allLoans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.allLoans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show all loans for a customer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.allPayments">
+<tt class="descclassname">views.</tt><tt class="descname">allPayments</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#allPayments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.allPayments" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for displaying all payments made by a customer in reverse chronological order</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.cancelOrArchive">
+<tt class="descclassname">views.</tt><tt class="descname">cancelOrArchive</tt><big>(</big><em>request</em>, <em>cancelOrArchive</em>, <em>applicationID</em><big>)</big><a class="reference internal" href="_modules/views.html#cancelOrArchive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.cancelOrArchive" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for cancelling or archiving an application. Redirects back to allApplications.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.dueInstallments">
+<tt class="descclassname">views.</tt><tt class="descname">dueInstallments</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#dueInstallments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.dueInstallments" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for displaying all due and/or overdue installments for all loans of a customer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.home">
+<tt class="descclassname">views.</tt><tt class="descname">home</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#home"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Home page for a unsigned user.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.loanDetails">
+<tt class="descclassname">views.</tt><tt class="descname">loanDetails</tt><big>(</big><em>request</em>, <em>loanId</em><big>)</big><a class="reference internal" href="_modules/views.html#loanDetails"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.loanDetails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the loan details for a loanId</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.newApplication">
+<tt class="descclassname">views.</tt><tt class="descname">newApplication</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#newApplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.newApplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Files a new application.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.newApplicationThanks">
+<tt class="descclassname">views.</tt><tt class="descname">newApplicationThanks</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#newApplicationThanks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.newApplicationThanks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thank you page after a new application request.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.payInstallment">
+<tt class="descclassname">views.</tt><tt class="descname">payInstallment</tt><big>(</big><em>request</em>, <em>loanId</em><big>)</big><a class="reference internal" href="_modules/views.html#payInstallment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.payInstallment" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for paying an installment</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.payInstallmentThanks">
+<tt class="descclassname">views.</tt><tt class="descname">payInstallmentThanks</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#payInstallmentThanks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.payInstallmentThanks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirects to thank you page after the payment of an installment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.payPrepayment">
+<tt class="descclassname">views.</tt><tt class="descname">payPrepayment</tt><big>(</big><em>request</em>, <em>loanId</em><big>)</big><a class="reference internal" href="_modules/views.html#payPrepayment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.payPrepayment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepay an amount for a loan.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.payPrepaymentThanks">
+<tt class="descclassname">views.</tt><tt class="descname">payPrepaymentThanks</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#payPrepaymentThanks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.payPrepaymentThanks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thank you page after the payment of an installment.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.support">
+<tt class="descclassname">views.</tt><tt class="descname">support</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#support"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.support" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for filing a support request.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="views.supportThanks">
+<tt class="descclassname">views.</tt><tt class="descname">supportThanks</tt><big>(</big><em>request</em><big>)</big><a class="reference internal" href="_modules/views.html#supportThanks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#views.supportThanks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thank you page after a support request submission.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="loans.html"
+                        title="previous chapter">loans.models</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="apiviews.html"
+                        title="next chapter">apiviews</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/views.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="apiviews.html" title="apiviews"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="loans.html" title="loans.models"
+             >previous</a> |</li>
+        <li><a href="index.html">LoansProject 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

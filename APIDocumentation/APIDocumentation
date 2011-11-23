@@ -108,7 +108,7 @@
 	  
 11. ActiveLoan
 
-	This API function enumerates ALL the active loan objects
+	This API function enumerates ALL the active loan objects for a particular customer.
 	Format of URL: http://localhost:8000/api/activeLoan
 		
 		
