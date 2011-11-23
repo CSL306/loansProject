@@ -309,7 +309,7 @@ def newApplication(request):
       form = ApplicationForm(request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          application = Application(name=cd["loanName"], amountAppliedFor=cd["loanAmount"], loanType=cd["loanCategory"], security=cd["security"], customer=Customer.objects.get(id=customerId))
+          application = Application(name=cd["loanName"], amountAppliedFor=cd["loanAmount"], loanType=cd["loanCategory"], security=cd["security"], customer=Customer.objects.get(id=customerId), isActive=True)
           application.save()
           return HttpResponseRedirect('/newApplicationThanks/')
   else:
