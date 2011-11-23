@@ -10,6 +10,7 @@
 <th>Loan Name</th>
 <th>Loan type</th>
 <th>Amount sanction</th>
+<th>Status</th>
 <th>Interest type</th>
 <th>Interest Rate</th>
 <th>Allotment Date</th>
@@ -22,6 +23,7 @@
 	<td>{{application.name}}</td>
 	<td>{{application.loanType}}</td>
 	<td>{{application.amountAllotted}}</td>
+	<td>{{application.status}}</td>
 	<td>{{application.interestCategory}}</td>
 	<td>{{application.interestRate}}</td>
 	<td>{{application.dateOfAllotment}}</td>
@@ -36,7 +38,7 @@
 {% endif %}
 <h2>Under Processing</h2>
 {% if underProcessingApplications %}
-<table width="70%">
+<table class="long">
 <tr class="top-row">
 <th>Loan Name</th>
 <th>Loan type</th>
@@ -68,6 +70,7 @@
 <th>Loan Name</th>
 <th>Loan type</th>
 <th>Amount sanction</th>
+<th>Status</th>
 <th>Interest type</th>
 <th>Interest Rate</th>
 <th>Allotment Date</th>
@@ -85,6 +88,7 @@
 	<td>N.A.</td>
 	{% else %}
 	<td>{{application.amountAllotted}}</td>
+	<td>{{application.status}}</td>
 	<td>{{application.interestCategory}}</td>
 	<td>{{application.interestRate}}</td>
 	<td>{{application.dateOfAllotment}}</td>
