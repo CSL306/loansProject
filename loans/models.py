@@ -31,6 +31,10 @@ class Customer(models.Model):
 
   def __unicode__(self):
     return u'%s %s' % (self.accountNumber, self.name)
+    
+  def serialize(self):
+    result = {'name': str(self.name), 'accountNumber': str(self.accountNumber), 'customerType': str(self.customerType), 'creditRating': str(self.creditRating),}
+    return result
 
 class Loan(models.Model):
   """Each loan a customer take is an instance of this class. A customer can be associated with one or more loans."""
@@ -43,9 +47,12 @@ class Loan(models.Model):
   dateTaken = models.DateTimeField(auto_now_add=True)
   security = models.CharField(max_length=100, choices=SECURITY_TYPES)
   customer = models.ForeignKey(Customer)
-
+  def serialize(self):
+	  result = {'name':str(self.name), 'isActive':str(self.isActive), 'principal':str(self.principal), 'originalMonths':str(self.originalMonths), 'interestCategory':str(self.interestCategory), 'loanType':str(self.loanType), 'dateTaken':str(self.dateTaken), 'security':str(self.security),}
+	  return result
+		
   def __unicode__(self):
-    return u'%s' % (self.name)
+	  return u'%s' % (self.name)
 
 class ActiveLoan(models.Model):
   """Each ActiveLoan is an instance of this class."""
@@ -108,6 +115,11 @@ class Payment(models.Model):
   paymentType = models.CharField(max_length=20) # Prepayment or Installment
   datePaid = models.DateTimeField(auto_now_add=True)
   merchantUsed = models.CharField(max_length=20)
+  
+  def serialize(self):
+  	result = {'amount': str(self.amount), 'loan': str(self.loan), 'paymentType': str(self.paymentType), 'datePaid': str(self.datePaid), 'merchantUsed': str(self.merchantUsed),}
+  	
+  	return result;
 
 class OverdueInstallment(models.Model):
   """This class stores all the installments which have passed their due dates and haven't been paid yet"""
