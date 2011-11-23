@@ -387,7 +387,7 @@ def support(request):
       form = SupportForm(customerId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          ticket = SupportTicket(loan=cd["loan"], complaintType=cd["complaintType"], complaintMessage=cd["message"])
+          ticket = SupportTicket(loan=cd["loan"], complaintType=cd["complaintType"], complaintMessage=cd["message"], customer_id = customerId)
           ticket.save()
           return HttpResponseRedirect('/supportThanks/')
   else:
