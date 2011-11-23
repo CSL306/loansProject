@@ -1,0 +1,142 @@
+1. PaymentsBetween
+
+	This is an API function which takes customer id, start date (optional) and end date (optional) and returns a list of all the payments made by the	 customer between start and end date.
+  If start date is missing, it returns all payments made BEFORE the end date.
+  If end date is missing, it returns all payments made AFTER start date.
+  If both are missing, it returns all payments made by the customer.
+
+  Format of URL: http://localhost:8000/api/paymentsBetween/<customer_id>/<start_date>/<end_date>
+  <start_date>: s<date>
+  <end_date>: e<date>
+  <date>:ddmmyyyy
+
+  <start_date> and <end_date> are optional
+
+  Examples: http://localhost:8000/api/paymentsBetween/1
+          : http://localhost:8000/api/paymentsBetween/1/s17112011
+          : http://localhost:8000/api/paymentsBetween/1/e19112011
+          : http://localhost:8000/api/paymentsBetween/1/s17112011/e19112011
+
+  Note: Don't reverse the order of <start_date> and <end_date>
+  
+
+2. PaymentHistory 
+
+	This API function takes a customer id and loan name and returns all the payments corresponding to that loan
+  Format of URL: http://localhost:8000/api/paymentHistoryOfLoan/<customer_id>/<loan_name>
+
+  Examples: http://localhost:8000/api/paymentHistoryOfLoan/1/NewTestLoan1
+  
+
+3. Defaulters 
+
+	This API function returns a list of all the customers who have more than 2 overdue installments i.e. are defaulters.
+  Format of URL: http://localhost:8000/api/defaulters
+  
+ 
+4. PaymentHistoryAllLoans 
+
+	 This API function takes a customer id and returns all the payments made by this customer 
+	 Format of URL: http://localhost:8000/api/paymentHistoryAllLoans/<customer_id>
+
+   Example: http://localhost:8000/api/paymentHistoryAllLoans/1
+   
+   
+5. MonthlyInstallment 
+
+	This API function gives all the monthly installments of all the loans of a given customer.
+  Format of URL: http://localhost:8000/api/monthlyInstallment/<customer_id>
+
+  Example: http://localhost:8000/api/monthlyInstallment/1
+  
+  
+6. LoansTakenBetween 
+
+	This method gives all the loans taken by a given customer between a given (optional) start date and a given (optional) end date.
+	If start data is missing, it returns all loans taken BEFORE the end date.
+  If end date is missing, it returns all loans taken AFTER start date.
+  If both are missing, it returns all loans taken by the customer.
+  
+	Format of URL: http://localhost:8000/api/loansTakenBetween/<customer_id>/<start_date>/<end_date>
+	<start_date>: s<date>
+	<end_date>: e<date>
+	<date>: ddmmyyyy
+	
+	<start_date> and <end_date> are optional.
+	
+	Examples: http://localhost:8000/api/loansTakenBetween/1
+          : http://localhost:8000/api/loansTakenBetween/1/s17112011
+          : http://localhost:8000/api/loansTakenBetween/1/e19112011
+          : http://localhost:8000/api/loansTakenBetween/1/s17112011/e19112011
+
+  Note: Don't reverse the order of <start_date> and <end_date>
+  
+ 
+7. LoansWithOverdueInstallments 
+
+	This API function takes a customer_id (optional) and returns all the loans taken by the customer which have overdue installments. It returns all loans with overdue installments in case there is no customer_id.
+	
+	Format of URL: http://localhost:8000/api/loansWithOverdueInstallments/<customer_id>
+	Examples: http://localhost:8000/api/loansWithOverdueInstallments
+					: http://localhost:8000/api/loansWithOverdueInstallments/1
+	
+
+8. LoanHistory 
+
+	This API function takes a customer id and returns all the loans taken by that customer.
+	Format of URL: http://localhost:8000/api/loanHistory/<customer_id>
+	Example: http://localhost:8000/api/loanHistory/1
+	
+	
+	
+	
+	
+	****** THE FOLLOWING FUNCTIONS RETURN ALL THE OBJECTS OF A PARTICULAR TYPE UNFILTERED ********
+	
+
+9. Loan 
+
+	This API function enumerates ALL the loan objects
+	Format of URL: http://localhost:8000/api/loan
+	 
+
+10. Customer  
+
+	This API function enumerates ALL the customer objects
+	Format of URL: http://localhost:8000/api/customer
+	  
+	  
+11. ActiveLoan
+
+	This API function enumerates ALL the active loan objects
+	Format of URL: http://localhost:8000/api/activeLoan
+		
+		
+12. CompletedLoan
+
+	This API function enumerates ALL the completed loan objects
+  Format of URL: http://localhost:8000/api/completedLoan
+	  
+	  
+13. Payment 
+
+	This API function enumerates ALL the payment objects
+	Format of URL: http://localhost:8000/api/payment
+		
+		
+14. OverdueInstallment 
+
+	This API function enumerates ALL the overdue installment objects
+	Format of URL: http://localhost:8000/api/overdueInstallment
+		
+	
+15. Application 
+
+	This API function enumerates ALL the application objects
+	Format of URL: http://localhost:8000/api/application
+		
+		
+16. SupportTicket
+
+	This API function enumerates ALL the support ticket objects
+	Format of URL: http://localhost:8000/api/supportTicket
