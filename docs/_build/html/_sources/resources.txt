@@ -1,0 +1,5 @@
+resources
+======================
+
+.. automodule:: resources
+    :members:

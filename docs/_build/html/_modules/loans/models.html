@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>loans.models &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for loans.models</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">signals</span>
+<span class="kn">from</span> <span class="nn">django.db.models.signals</span> <span class="kn">import</span> <span class="n">post_save</span>
+
+<span class="n">LOAN_TYPES</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="p">(</span><span class="s">&quot;Personal - Home&quot;</span><span class="p">,</span> <span class="s">&quot;Personal - Home&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;Personal - Car&quot;</span><span class="p">,</span> <span class="s">&quot;Personal - Car&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;Personal - Education&quot;</span><span class="p">,</span> <span class="s">&quot;Personal - Education&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;Corporate&quot;</span><span class="p">,</span> <span class="s">&quot;Corporate&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">COMPLAINT_TYPES</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="p">(</span><span class="s">&quot;None of these&quot;</span><span class="p">,</span> <span class="s">&quot;None of these&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;TYPE A&quot;</span><span class="p">,</span> <span class="s">&quot;TYPE A&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;TYPE B&quot;</span><span class="p">,</span> <span class="s">&quot;TYPE B&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">SECURITY_TYPES</span> <span class="o">=</span> <span class="p">(</span>
+  <span class="p">(</span><span class="s">&quot;None&quot;</span><span class="p">,</span> <span class="s">&quot;None&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;Vehicle&quot;</span><span class="p">,</span> <span class="s">&quot;Vehicle&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;Car&quot;</span><span class="p">,</span> <span class="s">&quot;Car&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;House&quot;</span><span class="p">,</span> <span class="s">&quot;House&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="Customer"><a class="viewcode-back" href="../../loans.html#loans.models.Customer">[docs]</a><span class="k">class</span> <span class="nc">Customer</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Each customer of the bank is an instance of this class.&quot;&quot;&quot;</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+  <span class="n">accountNumber</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">customerType</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> <span class="c"># Personal or Corporate</span>
+  <span class="n">creditRating</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">u&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accountNumber</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="s">&#39;accountNumber&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accountNumber</span><span class="p">),</span> <span class="s">&#39;customerType&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">customerType</span><span class="p">),</span> <span class="s">&#39;creditRating&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">creditRating</span><span class="p">),}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="Loan"><a class="viewcode-back" href="../../loans.html#loans.models.Loan">[docs]</a><span class="k">class</span> <span class="nc">Loan</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Each loan a customer take is an instance of this class. A customer can be associated with one or more loans.&quot;&quot;&quot;</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+  <span class="n">isActive</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+  <span class="n">principal</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">originalMonths</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span> <span class="c"># The total time period of the loan</span>
+  <span class="n">interestCategory</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c"># Fixed or Floating</span>
+  <span class="n">loanType</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">LOAN_TYPES</span><span class="p">)</span>
+  <span class="n">dateTaken</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">security</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">SECURITY_TYPES</span><span class="p">)</span>
+  <span class="n">customer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Customer</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="s">&#39;isActive&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">isActive</span><span class="p">),</span> <span class="s">&#39;principal&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">principal</span><span class="p">),</span> <span class="s">&#39;originalMonths&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">originalMonths</span><span class="p">),</span> <span class="s">&#39;interestCategory&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interestCategory</span><span class="p">),</span> <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loanType</span><span class="p">),</span> <span class="s">&#39;dateTaken&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dateTaken</span><span class="p">),</span> <span class="s">&#39;security&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">security</span><span class="p">),}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+  <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">u&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ActiveLoan"><a class="viewcode-back" href="../../loans.html#loans.models.ActiveLoan">[docs]</a><span class="k">class</span> <span class="nc">ActiveLoan</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Each ActiveLoan is an instance of this class.&quot;&quot;&quot;</span>
+  <span class="n">loan</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Loan</span><span class="p">)</span>
+  <span class="n">expectedDateOfTermination</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">()</span>
+  <span class="n">elapsedMonths</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+  <span class="n">monthlyInstallment</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">interestRate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c"># This is the annual interest rate in percentage.</span>
+  <span class="n">prepaymentPenaltyRate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">outstandingLoanBalance</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">nextInstallmentDueDate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ActiveLoan.computeMonthlyInstallment"><a class="viewcode-back" href="../../loans.html#loans.models.ActiveLoan.computeMonthlyInstallment">[docs]</a>  <span class="k">def</span> <span class="nf">computeMonthlyInstallment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the monthly installment based on the current outstanding loan balance, monthly interest rate and remaining months.&quot;&quot;&quot;</span>
+    <span class="n">monthlyInterestRate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interestRate</span><span class="o">/</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">remainingMonths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">elapsedMonths</span>
+    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outstandingLoanBalance</span><span class="o">*</span><span class="n">monthlyInterestRate</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">monthlyInterestRate</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">remainingMonths</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">monthlyInterestRate</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">remainingMonths</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ActiveLoan.computeOutstandingLoanBalance"><a class="viewcode-back" href="../../loans.html#loans.models.ActiveLoan.computeOutstandingLoanBalance">[docs]</a>  <span class="k">def</span> <span class="nf">computeOutstandingLoanBalance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the balance outstanding after elapsedMonths have passed (assuming all installments were paid on time.)</span>
+<span class="sd">    Notes on usage: Call this function once after paying every installment (when you increase elapsedMonths). Set outstandingLoanBalance using the value returned by this function. After that use that variable to query the outstanding loan balance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">monthlyInterestRate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interestRate</span><span class="o">/</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">remainingMonths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">elapsedMonths</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">elapsedMonths</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">outstandingLoanBalance</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">monthlyInterestRate</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">remainingMonths</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthlyInterestRate</span><span class="p">))</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthlyInterestRate</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">remainingMonths</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">principal</span>
+</div>
+<div class="viewcode-block" id="ActiveLoan.save"><a class="viewcode-back" href="../../loans.html#loans.models.ActiveLoan.save">[docs]</a>  <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Updates monthlyInstallment and saves the entry&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">monthlyInstallment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeMonthlyInstallment</span><span class="p">()</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ActiveLoan</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="firstSaveHandler"><a class="viewcode-back" href="../../loans.html#loans.models.firstSaveHandler">[docs]</a><span class="k">def</span> <span class="nf">firstSaveHandler</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">created</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This function is used to set the outstanding loan balance and elapsed months when the loan object is created.</span>
+<span class="sd">  Argument Explanation:</span>
+<span class="sd">  sender - The model class. (ActiveLoan)</span>
+<span class="sd">  instance - The actual instance being saved.</span>
+<span class="sd">  created - Boolean; True if a new record was created.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">created</span><span class="p">:</span>
+    <span class="n">instance</span><span class="o">.</span><span class="n">outstandingLoanBalance</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">principal</span>
+    <span class="n">instance</span><span class="o">.</span><span class="n">elapsedMonths</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</div>
+<span class="n">post_save</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">firstSaveHandler</span><span class="p">,</span> <span class="n">sender</span><span class="o">=</span><span class="n">ActiveLoan</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CompletedLoan"><a class="viewcode-back" href="../../loans.html#loans.models.CompletedLoan">[docs]</a><span class="k">class</span> <span class="nc">CompletedLoan</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Record for every completed loan.&quot;&quot;&quot;</span>
+  <span class="n">loan</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">Loan</span><span class="p">)</span>
+  <span class="n">dateOfCompletion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">totalAmountPaid</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">averageInterestRate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Payment"><a class="viewcode-back" href="../../loans.html#loans.models.Payment">[docs]</a><span class="k">class</span> <span class="nc">Payment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Record storing every transaction&quot;&quot;&quot;</span>
+  <span class="n">amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">loan</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Loan</span><span class="p">)</span>
+  <span class="n">paymentType</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> <span class="c"># Prepayment or Installment</span>
+  <span class="n">datePaid</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">merchantUsed</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;amount&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span> <span class="s">&#39;loan&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loan</span><span class="p">),</span> <span class="s">&#39;paymentType&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paymentType</span><span class="p">),</span> <span class="s">&#39;datePaid&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datePaid</span><span class="p">),</span> <span class="s">&#39;merchantUsed&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merchantUsed</span><span class="p">),}</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+
+</div>
+<div class="viewcode-block" id="OverdueInstallment"><a class="viewcode-back" href="../../loans.html#loans.models.OverdueInstallment">[docs]</a><span class="k">class</span> <span class="nc">OverdueInstallment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;This class stores all the installments which have passed their due dates and haven&#39;t been paid yet&quot;&quot;&quot;</span>
+  <span class="n">amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">dueDate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">()</span>
+  <span class="n">loan</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Loan</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">u&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loan</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Application"><a class="viewcode-back" href="../../loans.html#loans.models.Application">[docs]</a><span class="k">class</span> <span class="nc">Application</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;This stores information a user fills while applying for a new loan. This information is transferred to loan object once the application is approved.&quot;&quot;&quot;</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+  <span class="n">loanType</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">LOAN_TYPES</span><span class="p">)</span>
+  <span class="n">amountAppliedFor</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">dateApplied</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">security</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">SECURITY_TYPES</span><span class="p">)</span>
+  <span class="n">customer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Customer</span><span class="p">)</span>
+  <span class="n">amountAllotted</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">interestCategory</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">interestRate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="c"># This is annual interest rate in percentage.</span>
+  <span class="n">dateOfAllotment</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">loan</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Loan</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># Active, Allotted, Rejected, Cancelled</span>
+  <span class="n">isArchived</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="c"># User can archive the application if he doesn&#39;t want to see it again on his screen.</span>
+  <span class="n">remark</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="SupportTicket"><a class="viewcode-back" href="../../loans.html#loans.models.SupportTicket">[docs]</a><span class="k">class</span> <span class="nc">SupportTicket</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;This stores information about any complaint a user might have.&quot;&quot;&quot;</span>
+  <span class="n">loan</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Loan</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="n">complaintType</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">COMPLAINT_TYPES</span><span class="p">)</span>
+  <span class="n">complaintMessage</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+  <span class="n">customer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Customer</span><span class="p">)</span>
+
+<span class="c">#class Merchant(models.Model):</span>
+
+<span class="c">#class IdentityModule(models.Model):</span>
+
+<span class="c">#class AccountsModule(models.Model):</span>
+
+<span class="c">#class TransactionsModule(models.Model):</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -56,8 +56,8 @@ def dueInstallments(request):
 
 def allApplications(request):
   """
-     View for displaying all the loan applications a customer has made.
-     These applications include those which have been approved, rejected or are under consideration.
+  View for displaying all the loan applications a customer has made.
+  These applications include those which have been approved, rejected or are under consideration.
   """
 
   # Get the customerId and verify if the session is active.
@@ -111,28 +111,30 @@ def allApplications(request):
 
   return render_to_response('allApplications.html', locals())
 
+
 def allPayments(request):
-	
-	# Get customer id and verify is the session is active
-	customer_id = getCustomerId(request)
-	
-	# Get all the loans for the customer using the customer_id
-	loansList = Loan.objects.filter(customer=customer_id)
-	
-	#the list to be returned
-	paymentsList = []
-	
-	#loop over all the loans of the customer and get payments for every loan
-	for l in loansList:
-			paymentsList += Payment.objects.filter(loan = l)	#add the list of payments corresponding to every loan to paymentsList
-			
-	#the following function is defined for use with the sorted method
-	def getdatePaid(payment):
-		return payment.datePaid
-		
-	#sort the payments reverse chronologically
-	paymentsList = sorted(paymentsList, key=getdatePaid, reverse=True)
-	return render_to_response('allPayments.html', locals())
+  """View for displaying all payments made by a customer in reverse chronological order"""
+  # Get customer id and verify is the session is active
+  customer_id = getCustomerId(request)
+
+  # Get all the loans for the customer using the customer_id
+  loansList = Loan.objects.filter(customer=customer_id)
+
+  #the list to be returned
+  paymentsList = []
+
+  #loop over all the loans of the customer and get payments for every loan
+  for l in loansList:
+      paymentsList += Payment.objects.filter(loan = l)  #add the list of payments corresponding to every loan to paymentsList
+
+  #the following function is defined for use with the sorted method
+  def getdatePaid(payment):
+    return payment.datePaid
+
+  #sort the payments reverse chronologically
+  paymentsList = sorted(paymentsList, key=getdatePaid, reverse=True)
+  return render_to_response('allPayments.html', locals())
+
 
 def cancelOrArchive(request, cancelOrArchive, applicationID):
   """View for cancelling or archiving an application. Redirects back to allApplications. """
@@ -172,7 +174,8 @@ def allLoans(request):
                       'nextInstallmentDueDate':loan.activeloan.nextInstallmentDueDate,
                       'prepaymentPenaltyRate':loan.activeloan.prepaymentPenaltyRate,
                       'security':loan.security,
-                      'detailLink':"../loanDetails/"+str(loan.id),
+                      'detailLink':"/loanDetails/"+str(loan.id),
+                      'prepayNowLink':"/payPrepayment/"+str(loan.id),
       })
     else:
       compDict.append({'id':loan.id,
@@ -186,7 +189,8 @@ def allLoans(request):
                        'interestCategory':loan.interestCategory,
                        'averageInterestRate':loan.completedloan.averageInterestRate,
                        'detailLink':"../loanDetails/"+str(loan.id),
-      })
+                       'prepayNowLink':"/payPrepayment/"+str(loan.id),
+                       })
 
   return render_to_response('allLoans.html',locals())
 
@@ -288,13 +292,12 @@ def payInstallment(request, loanId):
 
 def payInstallmentThanks(request):
   """
-     Updates the database with the payment details etc.
-     Redirects to thank you page after the payment of an installment.
+  Redirects to thank you page after the payment of an installment.
   """
 
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-  
+
   return render_to_response('payInstallmentThanks.html',{})
 
 
@@ -308,7 +311,7 @@ def newApplication(request):
       form = ApplicationForm(request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          application = Application(name=cd["loanName"], amountAppliedFor=cd["loanAmount"], loanType=cd["loanCategory"], security=cd["security"], customer=Customer.objects.get(id=customerId))
+          application = Application(name=cd["loanName"], amountAppliedFor=cd["loanAmount"], loanType=cd["loanCategory"], security=cd["security"], customer=Customer.objects.get(id=customerId), status="Active")
           application.save()
           return HttpResponseRedirect('/newApplicationThanks/')
   else:
@@ -334,7 +337,7 @@ def payPrepayment(request, loanId):
     activeLoan = ActiveLoan.objects.get(loan__id=loanId)
   except ActiveLoan.DoesNotExist:
     raise Http404
-    
+
   loanName = activeLoan.loan.name
   outstandingAmount = activeLoan.outstandingLoanBalance
   if request.method == 'POST':
@@ -386,7 +389,7 @@ def support(request):
       form = SupportForm(customerId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          ticket = SupportTicket(loan=cd["loan"], complaintType=cd["complaintType"], complaintMessage=cd["message"])
+          ticket = SupportTicket(loan=cd["loan"], complaintType=cd["complaintType"], complaintMessage=cd["message"], customer_id = customerId)
           ticket.save()
           return HttpResponseRedirect('/supportThanks/')
   else:
@@ -401,4 +404,3 @@ def supportThanks(request):
   customerId = getCustomerId(request)
 
   return render_to_response('supportThanks.html', locals())
-
