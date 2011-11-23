@@ -33,7 +33,7 @@
 <td>{{a.security}}</td>
 <td><a href="{{a.detailLink}}">Details</a></td>
 <td>{{a.prepaymentPenaltyRate}}</td>
-<td width="10%"><button>Prepay Now</button></td>
+<td width="10%"><a href="{{a.prepayNowLink}}"><button>Prepay Now</button></a></td>
 </tr>
 {% endfor %}
 </table>
@@ -63,7 +63,7 @@
 <td>{{c.dateOfCompletion}}</td>
 <td>{{c.interestCategory}}</td>
 <td>{{c.averageInterestRate}}</td>
-<td><a href="{{c.detailLink}}">Details</a></td>
+<td width="10%"><a href="{{a.prepayNowLink}}"><button>Prepay Now</button></a></td>
 </tr>
 {% endfor %}
 

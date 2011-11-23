@@ -174,7 +174,8 @@ def allLoans(request):
                       'nextInstallmentDueDate':loan.activeloan.nextInstallmentDueDate,
                       'prepaymentPenaltyRate':loan.activeloan.prepaymentPenaltyRate,
                       'security':loan.security,
-                      'detailLink':"../loanDetails/"+str(loan.id),
+                      'detailLink':"/loanDetails/"+str(loan.id),
+                      'prepayNowLink':"/payPrepayment/"+str(loan.id),
       })
     else:
       compDict.append({'id':loan.id,
@@ -188,7 +189,8 @@ def allLoans(request):
                        'interestCategory':loan.interestCategory,
                        'averageInterestRate':loan.completedloan.averageInterestRate,
                        'detailLink':"../loanDetails/"+str(loan.id),
-      })
+                       'prepayNowLink':"/payPrepayment/"+str(loan.id),
+                       })
 
   return render_to_response('allLoans.html',locals())
 
