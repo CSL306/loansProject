@@ -68,6 +68,10 @@ class ActiveLoan(models.Model):
   outstandingLoanBalance = models.DecimalField(max_digits=15, decimal_places=2)
   nextInstallmentDueDate = models.DateTimeField()
 
+  def serialize(self):
+    result = {'loan':str(self.loan), 'expectedDateOfTermination':str(self.expectedDateOfTermination), 'elapsedMonths':str(self.elapsedMonths), 'monthlyInstallment':str(self.monthlyInstallment), 'interestRate':str(self.interestRate), 'prepaymentPenaltyRate':str(self.prepaymentPenaltyRate), 'outstandingLoanBalance':str(self.outstandingLoanBalance), 'nextInstallmentDueDate':str(self.nextInstallmentDueDate),}
+    return result
+
   def computeMonthlyInstallment(self):
     """Returns the monthly installment based on the current outstanding loan balance, monthly interest rate and remaining months."""
     monthlyInterestRate = self.interestRate/(100*12)

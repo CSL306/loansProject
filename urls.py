@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 
     # URL mappings for API calls
+    (r'^api/activeLoan/(?P<cust_id>\d+)/$', ActiveLoans.as_view()),
+      
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/$', PaymentsBetween.as_view()),
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/$', PaymentsBetween.as_view()),
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
