@@ -2,7 +2,8 @@ from django import forms
 from loans.models import *
 
 class SupportForm(forms.Form):
-  """ Form Class for the support form.
+  """ 
+  Form Class for the support form.
   """
   complaintType = forms.ChoiceField(choices=COMPLAINT_TYPES)
   message = forms.CharField(widget=forms.Textarea)
@@ -13,7 +14,8 @@ class SupportForm(forms.Form):
     self.fields['loan'] = forms.ModelChoiceField(queryset=Loan.objects.filter(customer__id=customerId))
 
   def clean_loan(self):
-    """ Validates whether the loan belongs to the customer.
+    """
+    Validates whether the loan belongs to the customer.
     """
     loan = self.cleaned_data["loan"]
     if loan not in Loan.objects.filter(customer__id=self.customerId):
@@ -23,7 +25,8 @@ class SupportForm(forms.Form):
 
 
 class ApplicationForm(forms.Form):
-  """ Form Class for the new application form.
+  """
+  Form Class for the new application form.
   """
   loanName = forms.CharField()
   loanAmount = forms.DecimalField(min_value=10000, decimal_places=2)
@@ -33,16 +36,17 @@ class ApplicationForm(forms.Form):
 
 
 class PrepaymentForm(forms.Form):
-  """ Form Class for the pay prepayment form.
+  """
+  Form Class for the pay prepayment form.
   """
   prepaymentAmount = forms.DecimalField()
 
   def __init__(self, loanId, data = None, initial = None):
     self.loanId = loanId
     super(PrepaymentForm, self).__init__(data = data, initial = initial)
-  
-  """ Checks if the specified prepayment amount is less than the outstanding
-  loan balance for a loan.
+
+  """
+  Checks if the specified prepayment amount is less than the outstanding loan balance for a loan.
   """
   def clean_prepaymentAmount(self):
     formAmount = self.cleaned_data["prepaymentAmount"]

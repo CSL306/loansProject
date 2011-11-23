@@ -15,6 +15,7 @@ Contents:
    views
    apiviews
    resources
+   forms
 
 Indices and tables
 ==================
