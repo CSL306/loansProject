@@ -1,8 +1,26 @@
 ﻿{% extends 'base.html' %}
-{% block title %}Write title here{% endblock %}
+{% block title %} Pay Installment{% endblock %}
 
-{% block content %} 
-
-Write content here
-
+{% block content %}
+<form action="" method="post"> 
+<table>
+<tr>
+<th>
+Loan Name: {{activeLoan.loan.name}} <br>
+Installment due date: {{dueDate}} <br>
+Current outstanding loan balance: {{outstandingLoanBalance}} <br>
+</th>
+<th>
+<h1> <center> {{installment}} </center> </h1>
+</th>
+</tr>
+<tr>
+<th>
+<center>
+<input type="submit" value="Proceed for payment" />
+<center>
+</th>
+</tr>
+</table>
+</form>
 {% endblock %}

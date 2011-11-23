@@ -1,8 +1,57 @@
 ﻿{% extends 'base.html' %}
-{% block title %}Write title here{% endblock %}
+{% block title %} Happy to Help! {% endblock %}
 
 {% block content %} 
-
-Write content here
-
+<form submit="" method="post">
+<table>
+<tr>
+  <th> Complaint Type:
+  </th>
+  <th> {{ form.complaintType }}
+  </th>
+  <th>
+    {% if form.complaintType.errors %}
+        <ul>
+        {% for error in form.security.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+        {% endfor %}
+        </ul>
+    {% endif %}  
+  </th>
+</tr>
+<tr>
+  <th> Associated Loan:
+  </th>
+  <th> {{ form.loan }} 
+  </th>
+  <th>
+    {% if form.loan.errors %}
+        <ul>
+        {% for error in form.loan.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+        {% endfor %}
+        </ul>
+    {% endif %}  
+  </th>
+</tr>
+<tr>
+  <th> Message:
+  </th>
+  <th> {{ form.message }}
+  </th>
+  <th>
+    {% if form.message.errors %}
+        <ul>
+        {% for error in form.message.errors %}
+            <li><strong>{{ error|escape }}</strong></li>
+        {% endfor %}
+        </ul>
+    {% endif %}  
+  </th>
+</tr>
+<tr> <td>
+<input type="submit" value="Submit Application" />
+</td> </tr>
+</table>
+</form>
 {% endblock %} 

@@ -1,5 +1,84 @@
 {% extends 'base.html' %}
-{% block title %}Write title here{% endblock %}
+{% block title %}File a new loan application{% endblock %}
 {% block content %}
-Write your template here
+<form submit="" method="post">
+<table>
+<tr>
+  <th> <label for="id_loanName">Loan Name: </label>
+  </th>
+  <th> {{ form.loanName }}
+  </th>
+  <th> 
+  {% if form.loanName.errors %}
+      <ul>
+      {% for error in form.loanName.errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+      {% endfor %}
+      </ul>
+  {% endif %}
+  </th>
+</tr>
+<tr>
+  <th> <label for="id_loanAmount">Loan Amount: </label>
+  </th>
+  <th> {{ form.loanAmount }}
+  </th>
+  <th> 
+  {% if form.loanAmount.errors %}
+      <ul>
+      {% for error in form.loanAmount.errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+      {% endfor %}
+      </ul>
+  {% endif %}
+  </th>
+</tr>
+<tr>
+  <th> <label for="id_loanCategory">Loan Category: </label>
+  </th>
+  <th> {{ form.loanCategory }}
+  </th>
+  <th> 
+  {% if form.loanCategory.errors %}
+      <ul>
+      {% for error in form.loanCategory.errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+      {% endfor %}
+      </ul>
+  {% endif %}
+  </th>
+</tr>
+<tr>
+  <th><label for="id_security">Security:</label>
+  </th>
+  <th> {{ form.security }}
+  </th>
+  <th> 
+  {% if form.security.errors %}
+      <ul>
+      {% for error in form.security.errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+      {% endfor %}
+      </ul>
+  {% endif %}
+  </th>
+</tr>
+<tr>
+  <th><input type="checkbox" name="acceptedTerms" id="id_acceptedTerms" /> I accept the terms and conditions of the bank.
+  </th>
+  <th> 
+  {% if form.acceptedTerms.errors %}
+      <ul>
+      {% for error in form.acceptedTerms.errors %}
+          <li><strong>{{ error|escape }}</strong></li>
+      {% endfor %}
+      </ul>
+  {% endif %}
+  </th>
+</tr>
+<tr> <td>
+<input type="submit" value="Submit Application" />
+</td> </tr>
+</table>
+</form>
 {% endblock %} 

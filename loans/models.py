@@ -138,14 +138,14 @@ class Application(models.Model):
   dateApplied = models.DateTimeField(auto_now_add=True)
   security = models.CharField(max_length=100, choices=SECURITY_TYPES)
   customer = models.ForeignKey(Customer)
-  amountAllotted = models.DecimalField(max_digits=15, decimal_places=2)
-  interestCategory = models.CharField(max_length=10)
-  interestRate = models.DecimalField(max_digits=6, decimal_places=2) # This is annual interest rate in percentage.
-  dateOfAllotment = models.DateTimeField()
+  amountAllotted = models.DecimalField(max_digits=15, decimal_places=2, default = 0)
+  interestCategory = models.CharField(max_length=10, blank=True)
+  interestRate = models.DecimalField(max_digits=6, decimal_places=2, default = 0) # This is annual interest rate in percentage.
+  dateOfAllotment = models.DateTimeField(auto_now_add=True)
   loan = models.ForeignKey(Loan, blank=True, null=True)
-  status = models.CharField(max_length=20) # Active, Allotted, Rejected, Cancelled
-  isArchived = models.BooleanField() # User can archive the application if he doesn't want to see it again on his screen.
-  remark = models.TextField()
+  status = models.CharField(max_length=20, blank=True) # Active, Allotted, Rejected, Cancelled
+  isArchived = models.BooleanField(default=False) # User can archive the application if he doesn't want to see it again on his screen.
+  remark = models.TextField(blank=True)
 
 class SupportTicket(models.Model):
   """This stores information about any complaint a user might have."""

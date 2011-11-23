@@ -19,6 +19,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
+    
+    # URL mappings for API calls
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/$', PaymentsBetween.as_view()),
 		(r'^api/paymentsBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/$', PaymentsBetween.as_view()),
 		(r'^api/paymentsBetween/(?P<cust_id>\d+)/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
@@ -52,6 +54,7 @@ urlpatterns = patterns('',
     (r'^api/SupportTicket/$', ListModelView.as_view(resource=SupportTicketResource)),
     (r'^api/SupportTicket/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=SupportTicketResource)),
 
+    # URL mappings for page views
     (r'^home/$', home),
     (r'^dueInstallments/$', dueInstallments),
     (r'^allApplications/$', allApplications),
@@ -61,6 +64,13 @@ urlpatterns = patterns('',
     (r'^allLoans/$',allLoans),
     (r'^loanDetails/(\d+)/$',loanDetails),
     (r'^payInstallment/(\d+)/$', payInstallment),
+    (r'^payInstallmentThanks/$', payInstallmentThanks),
+    (r'^payPrepayment/(\d+)/$', payPrepayment),
+    (r'^payPrepaymentThanks/$', payPrepaymentThanks),
+    (r'^newApplication/$', newApplication),
+    (r'^newApplicationThanks/$', newApplicationThanks),
+    (r'^support/$', support),
+    (r'^supportThanks/$', supportThanks),    
 )
 
 urlpatterns += patterns('django.views.static',
@@ -69,11 +79,13 @@ urlpatterns += patterns('django.views.static',
                         (r'^loanDetails/(\d+)/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
                         (r'^dueInstallments/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}), 
                         (r'^allPayments/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
-                        (r'^base/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),)
-
-"""
-    (r'^applyForLoan/$', applyForLoan),
-    (r'^applicationDetails/$', applicationDetails),
-    (r'^paymentHistory/$', paymentHistory),
-    (r'^supporrt/$', support),
-"""
+                        (r'^base/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
+                        (r'^payInstallment/(\d+)/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}), 
+                        (r'^payInstallmentThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),                          
+                        (r'^payPrepayment/(\d+)/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
+                        (r'^payPrepaymentThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
+                        (r'^newApplication/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
+                        (r'^newApplicationThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
+                        (r'^support/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),                        
+                        (r'^supportThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
+                        )

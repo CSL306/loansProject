@@ -1,12 +1,13 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from forms import *
 from externalapis import *
 from loans.models import *
-from djangorestframework.views import View;
-from djangorestframework.renderers import JSONRenderer;
-from djangorestframework.serializer import Serializer;
-import datetime;
+from djangorestframework.views import View
+from djangorestframework.renderers import JSONRenderer
+from djangorestframework.serializer import Serializer
+import datetime
+
 def getCustomerId(request):
   return 1
   #sessionId = request.session.get("id","none")
@@ -252,14 +253,43 @@ def payInstallment(request, loanId):
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
 
-  activeLoan = ActiveLoan.objects.get(loan__id=loanId)
-  dueDate = activeLoan.nextInstallmentDueDate
-  installment = activeLoan.monthlyInstallment
-  outstandingLoanBalance = activeLoan.outstandingLoanBalance
+  if request.method == 'POST':
+    activeLoan = ActiveLoan.objects.get(loan__id=loanId)
+
+    # Adds the payment to Payment model
+    payment = Payment(amount=activeLoan.monthlyInstallment, loan=activeLoan.loan, paymentType="installment", merchantUsed="none")
+    payment.save()
+
+    # Updates the activeLoan or makes it a completed loan if this was the last installment.
+    if activeLoan.elapsedMonths + 1 == activeLoan.loan.originalMonths:
+      paymentList = Payment.objects.filter(loan__id=loanId)
+      totalAmountPaid = 0
+      for payment in paymentList:
+        totalAmountPaid += payment.amount
+      averageInterestRate = activeLoan.interestRate
+      completedLoan = CompletedLoan(loan=activeLoan.loan, totalAmountPaid=totalAmountPaid, averageInterestRate=averageInterestRate)
+      completedLoan.save()
+      activeLoan.loan.isActive = False
+      activeLoan.loan.save()
+      activeLoan.delete()
+    else:
+      activeLoan.elapsedMonths += 1
+      activeLoan.nextInstallmentDueDate += datetime.timedelta(days=30)
+      activeLoan.outstandingLoanBalance = activeLoan.computeOutstandingLoanBalance()
+      activeLoan.save()
+    return HttpResponseRedirect('/payInstallmentThanks/')
+  else:
+    try:
+      activeLoan = ActiveLoan.objects.get(loan__id=loanId)
+    except ActiveLoan.DoesNotExist:
+      raise Http404
+    dueDate = activeLoan.nextInstallmentDueDate
+    installment = activeLoan.monthlyInstallment
+    outstandingLoanBalance = activeLoan.outstandingLoanBalance
   return render_to_response('payInstallment.html', locals())
 
 
-def payInstallmentThanks(request, loanId):
+def payInstallmentThanks(request):
   """
      Updates the database with the payment details etc.
      Redirects to thank you page after the payment of an installment.
@@ -267,28 +297,8 @@ def payInstallmentThanks(request, loanId):
 
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-
-  activeLoan = ActiveLoan.objects.get(loan__id=loanId)
-
-  # Adds the payment to Payment model
-  payment = Payment(amount=activeLoan.monthlyInstallment, loan=activeLoan.loan, paymentType="installment", merchantUsed="none")
-  payment.save()
-
-  # Updates the activeLoan or makes it a completed loan if this was the last installment.
-  if activeLoan.elapsedMonths + 1 == activeLoan.loan.originalMonths:
-    paymentList = Payment.objects.filter(loan__id=loanId)
-    totalAmountPaid = 0
-    for payment in paymentList:
-      totalAmountPaid += payment.amount
-    averageInterestRate = activeLoan.interestRate
-    completedLoan = CompletedLoan(loan=activeLoan.loan, totalAmountPaid=totalAmountPaid, averageInterestRate=averageInterestRate)
-    completedLoan.save()
-    activeLoan.loan.isActive = False
-    activeLoan.delete()
-  else:
-    activeLoan.elapsedMonths += 1
-    activeLoan.outstandingLoanBalance = activeLoan.computeOutstandingLoanBalance()
-    activeLoan.save()
+  
+  return render_to_response('payInstallmentThanks.html',{})
 
 
 def newApplication(request):
@@ -301,9 +311,9 @@ def newApplication(request):
       form = ApplicationForm(request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          application = Application(name=cd.loanName, amountAppliedFor=cd.loanAmount, loanType=cd.loanCategory, security=cd.security)
+          application = Application(name=cd["loanName"], amountAppliedFor=cd["loanAmount"], loanType=cd["loanCategory"], security=cd["security"], customer=Customer.objects.get(id=customerId))
           application.save()
-          return HttpResponseRedirect('/newApplication/thanks/')
+          return HttpResponseRedirect('/newApplicationThanks/')
   else:
       form = ApplicationForm()
   return render_to_response('newApplication.html', locals())
@@ -323,24 +333,24 @@ def payPrepayment(request, loanId):
 
   # Get the customerId and verify if the session is active.
   customerId = getCustomerId(request)
-
-  activeLoan = ActiveLoan.objects.get(loan_id=loanId)
+  
+  activeLoan = ActiveLoan.objects.get(loan__id=loanId)
   loanName = activeLoan.loan.name
   outstandingAmount = activeLoan.outstandingLoanBalance
   if request.method == 'POST':
       form = PrepaymentForm(loanId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          amount = cd.prepayAmount/(1+(activeLoan.prepaymentPenaltyRate/100))
-          activeloan.outstandingLoanBalance = activeloan.outstandingLoanBalance - amount
-          activeloan.save()
+          amount = cd["prepaymentAmount"]/(1+(activeLoan.prepaymentPenaltyRate/100))
+          activeLoan.outstandingLoanBalance = activeLoan.outstandingLoanBalance - amount
+          activeLoan.save()
           # Adds the payment to Payment model
           payment = Payment(amount=amount, loan=activeLoan.loan, paymentType="prepayment", merchantUsed="none")
           payment.save()
 
-          return HttpResponseRedirect('/payPrepayment/thanks/')
+          return HttpResponseRedirect('/payPrepaymentThanks/')
   else:
-      form = PrepaymentForm(loanId, initial = {'prepayAmount': outstandingAmount/2})
+      form = PrepaymentForm(loanId, initial = {'prepaymentAmount': outstandingAmount/2})
   return render_to_response('payPrepayment.html', locals())
 
 
@@ -363,9 +373,9 @@ def support(request):
       form = SupportForm(customerId, request.POST)
       if form.is_valid():
           cd = form.cleaned_data
-          ticket = SupportTicket(loan=cd.loan, complaintType=cd.complaintType, complaintMessage=cd.message)
+          ticket = SupportTicket(loan=cd["loan"], complaintType=cd["complaintType"], complaintMessage=cd["message"])
           ticket.save()
-          return HttpResponseRedirect('/support/thanks/')
+          return HttpResponseRedirect('/supportThanks/')
   else:
       form = SupportForm(customerId, initial={'message': 'Please enter your message here.'})
   return render_to_response('support.html', locals())
@@ -505,7 +515,7 @@ class PaymentHistoryAllLoans(View):
 		for payment in paymentsList:
 			result.append(payment.serialize())	#serialize
   	
-		return JSONRenderer(self).render(result)	#convert to JSON
+		return result	#convert to JSON
   	
 class MonthlyInstallment(View):
 
