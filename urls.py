@@ -21,6 +21,16 @@ urlpatterns = patterns('',
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
 
+		(r'^api/loansTakenBetween/(?P<cust_id>\d+)/$', LoansTakenBetween.as_view()),
+    (r'^api/loansTakenBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/$', LoansTakenBetween.as_view()),
+    (r'^api/loansTakenBetween/(?P<cust_id>\d+)/e(?P<end>\d{8})/$', LoansTakenBetween.as_view()),
+    (r'^api/loansTakenBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/e(?P<end>\d{8})/$', LoansTakenBetween.as_view()),
+    
+    (r'^api/loansWithOverdueInstallments/$', LoansWithOverdueInstallments.as_view()),
+    (r'^api/loansWithOverdueInstallments/(?P<cust_id>\d+)/$', LoansWithOverdueInstallments.as_view()),
+    
+    (r'^api/loanHistory/(?P<cust_id>\d+)/$', LoanHistory.as_view()),
+    
     (r'^api/paymentHistoryOfLoan/(?P<cust_id>\d+)/(?P<lname>[a-zA-Z0-9]+)/$', PaymentHistoryOfLoan.as_view()),
 
     (r'^api/defaulters/$', Defaulters.as_view()),
@@ -29,29 +39,29 @@ urlpatterns = patterns('',
 
     (r'^api/monthlyInstallment/(?P<cust_id>\d+)/$', MonthlyInstallment.as_view()),
 
-    (r'^api/Loan/$', ListModelView.as_view(resource=LoanResource)),
-    (r'^api/Loan/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=LoanResource)),
+    (r'^api/loan/$', ListModelView.as_view(resource=LoanResource)),
+    (r'^api/loan/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=LoanResource)),
 
-    (r'^api/Customer/$', ListModelView.as_view(resource=CustomerResource)),
-    (r'^api/Customer/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=CustomerResource)),
+    (r'^api/customer/$', ListModelView.as_view(resource=CustomerResource)),
+    (r'^api/customer/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=CustomerResource)),
 
-    (r'^api/ActiveLoan/$', ListModelView.as_view(resource=ActiveLoanResource)),
-    (r'^api/ActiveLoan/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=ActiveLoanResource)),
+    (r'^api/activeLoan/$', ListModelView.as_view(resource=ActiveLoanResource)),
+    (r'^api/activeLoan/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=ActiveLoanResource)),
 
-    (r'^api/CompletedLoan/$', ListModelView.as_view(resource=CompletedLoanResource)),
-    (r'^api/CompletedLoan/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=CompletedLoanResource)),
+    (r'^api/completedLoan/$', ListModelView.as_view(resource=CompletedLoanResource)),
+    (r'^api/completedLoan/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=CompletedLoanResource)),
 
-    (r'^api/Payment/$', ListModelView.as_view(resource=PaymentResource)),
-    (r'^api/Payment/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=PaymentResource)),
+    (r'^api/payment/$', ListModelView.as_view(resource=PaymentResource)),
+    (r'^api/payment/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=PaymentResource)),
 
-    (r'^api/OverdueInstallment/$', ListModelView.as_view(resource=OverdueInstallmentResource)),
-    (r'^api/OverdueInstallment/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=OverdueInstallmentResource)),
+    (r'^api/overdueInstallment/$', ListModelView.as_view(resource=OverdueInstallmentResource)),
+    (r'^api/overdueInstallment/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=OverdueInstallmentResource)),
 
-    (r'^api/Application/$', ListModelView.as_view(resource=ApplicationResource)),
-    (r'^api/Application/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=ApplicationResource)),
+    (r'^api/application/$', ListModelView.as_view(resource=ApplicationResource)),
+    (r'^api/application/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=ApplicationResource)),
 
-    (r'^api/SupportTicket/$', ListModelView.as_view(resource=SupportTicketResource)),
-    (r'^api/SupportTicket/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=SupportTicketResource)),
+    (r'^api/supportTicket/$', ListModelView.as_view(resource=SupportTicketResource)),
+    (r'^api/supportTicket/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=SupportTicketResource)),
 
     # URL mappings for page views
     (r'^home/$', home),
