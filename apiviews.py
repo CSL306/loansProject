@@ -161,3 +161,110 @@ class MonthlyInstallment(View):
       result.append({'cust_id': l.customer.name, 'loanType': l.loanType, 'MonthlyInstallment': activeLoan[0].monthlyInstallment, 'DueDate': activeLoan[0].nextInstallmentDueDate,})  #serialize
 
     return result
+    
+class LoansTakenBetween(View):
+	"""
+	This method gives all the loans taken by a given customer between a given (optional) start date and a given (optional) end date.
+	If start data is missing, it returns all loans taken BEFORE the end date.
+  If end date is missing, it returns all loans taken AFTER start date.
+  If both are missing, it returns all loans taken by the customer.
+  
+	Format of URL: http://localhost:8000/api/loansTakenBetween/<customer_id>/<start_date>/<end_date>
+	<start_date>: s<date>
+	<end_date>: e<date>
+	<date>: ddmmyyyy
+	
+	<start_date> and <end_date> are optional.
+	
+	Examples: http://localhost:8000/api/loansTakenBetween/1
+          : http://localhost:8000/api/loansTakenBetween/1/s17112011
+          : http://localhost:8000/api/loansTakenBetween/1/e19112011
+          : http://localhost:8000/api/loansTakenBetween/1/s17112011/e19112011
+
+  Note: Don't reverse the order of <start_date> and <end_date>
+  """
+	def get(self, request, cust_id, start=None, end=None):
+		
+		#get all loans taken by the customer
+		loansList = Loan.objects.filter(customer=cust_id)
+		
+		#parse the url to get start date and end date
+		def parse(datearg):
+			return datetime.date(int(datearg)%10000, (int(datearg)/10000)%100, (int(datearg)/1000000))
+
+		if (start != None):
+			start = parse(start)	
+
+		if (end != None):
+			end = parse(end)
+
+		loansListFiltered = []
+
+    #filter loans based on start date and end date
+		if (start == None and end == None):
+			loansListFiltered = loansList
+
+		elif (start != None and end == None):
+			loansListFiltered = loansList.exclude(dateTaken__lt=start)
+
+		elif (start == None and end != None):
+			loansListFiltered = loansList.exclude(dateTaken__gt=end)
+
+		else:
+			loansListFiltered = loansList.exclude(dateTaken__lt=start, dateTaken__gt=end)
+
+		result=[]
+		for loan in loansListFiltered:
+			result.append(loan.serialize());  #serialize all the loan objects so that they can be converted to JSON
+
+		return result
+			
+class LoansWithOverdueInstallments(View):
+	"""
+	This class takes a customer_id (optional) and returns all the loans taken by the customer which have overdue installments. It returns all loans with overdue installments in case there is no customer_id.
+	
+	Format of URL: http://localhost:8000/api/loansWithOverdueInstallments/<customer_id>
+	Examples: http://localhost:8000/api/loansWithOverdueInstallments
+					: http://localhost:8000/api/loansWithOverdueInstallments/1
+	"""
+	def get(self, request, cust_id = None):
+		
+		#get all the overdue installments
+		overdueInstallments = OverdueInstallment.objects.all()
+		loansList = []
+		
+		#loop over all the overdue installments to get corresponding loans
+		if (cust_id == None):
+			for oi in overdueInstallments:
+				loansList.append(oi.loan)
+		
+		#filter loans according to customer_id	
+		else:
+			for oi in overdueInstallments:
+				if (int(oi.loan.customer.id) == int(cust_id)):
+					loansList.append(oi.loan)
+					
+		result = []
+		for loan in loansList:
+			result.append(loan.serialize())	#serialize the loan objects
+		
+		return result
+		
+class LoanHistory(View):
+	"""
+	This class takes a customer id and returns all the loans taken by that customer.
+	Format of URL: http://localhost:8000/api/loanHistory/<customer_id>
+	Example: http://localhost:8000/api/loanHistory/1
+	"""
+	def get(self, request, cust_id):
+	
+		#get all loans taken by the customer
+		loansList = Loan.objects.filter(customer = cust_id)
+		
+		result = []
+		for loan in loansList:
+			result.append(loan.serialize())	#serialize the loan objects
+		
+		return result	
+		
+			
