@@ -11,15 +11,16 @@ class SupportForm(forms.Form):
   def __init__(self, customerId, data = None, initial = None):
     self.customerId = customerId
     super(SupportForm, self).__init__(data = data, initial = initial)
-    self.fields['loan'] = forms.ModelChoiceField(queryset=Loan.objects.filter(customer__id=customerId))
+    self.fields['loan'] = forms.ModelChoiceField(queryset=Loan.objects.filter(customer__id=customerId), required=False)
 
   def clean_loan(self):
     """
     Validates whether the loan belongs to the customer.
     """
     loan = self.cleaned_data["loan"]
-    if loan not in Loan.objects.filter(customer__id=self.customerId):
-      raise forms.ValidationError('The loan provided is not valid.')
+    if loan:
+      if loan not in Loan.objects.filter(customer__id=self.customerId):
+        raise forms.ValidationError('The loan provided is not valid.')
     else:
       return loan
 
