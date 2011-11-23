@@ -3,13 +3,14 @@
 
 {% block content %}
 <h2>Due Installments</h2>
+{% if overdueInstallments or dueInstallments %}
 <table class="long" cellpadding="4px;">
+{% if overdueInstallments %}
 {% for inst in overdueInstallments %}
 {% if forloop.first %}
 <tr class="top-row">
 <th>Loan Name</th>
-<th>Due Installment Amount</th>
-<th>Outstanding Loan Balance</th>
+<th>Due Installment Amount (in Rs.)</th>
 <th>Due Date</th>
 <th></th>
 </tr>
@@ -17,19 +18,23 @@
 <tr class="overdue" onmouseover="this.className='overdue-over'" onmouseout="this.className='overdue'">
 <td>{{inst.loan}}</td>
 <td>{{inst.amount}}</td>
-<td></td>
 <td>{{inst.dueDate}}</td>
 <td><a href="../payInstallment/{{inst.loan}}" id="button-link"><button>Pay Now</button></a></td>
 </tr>
 {% endfor %}
+{% endif %}
+{% if dueInstallments %}
 {% for inst in dueInstallments %}
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
 <td>{{inst.loan}}</td>
 <td>{{inst.amount}}</td>
-<td></td>
 <td>{{inst.dueDate}}</td>
 <td><a href="../payInstallment/{{inst.loan}}" id="button-link"><button>Pay Now</button></a></td>
 </tr>
 {% endfor %}
+{% endif %}
 </table>
+{% else %}
+<p>No due Installments</p>
+{% endif %}
 {% endblock %}

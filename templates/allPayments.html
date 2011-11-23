@@ -3,14 +3,13 @@
 
 {% block content %}
 <h2>All Payments</h2>
+{% if paymentsList %}
 <table class="long">
 <tr class="top-row">
 <th>Loan Name</th>
-<th>Amount Paid</th>
+<th>Amount Paid (in Rs.)</th>
 <th>Payment Type</th>
 <th>Payment Date</th>
-<th>Merchant</th>
-<th></th>
 </tr>
 {% for payment in paymentsList %}
 	<tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'"> 
@@ -18,9 +17,10 @@
 	<td>{{payment.amount}}</td>
 	<td>{{payment.paymentType}}</td>
 	<td>{{payment.datePaid}}</td>
-	<td>{{payment.MerchantUsed}}</td>
 	</tr>
 {% endfor %}
-
 </table>
+{% else %}
+<p>No payments till now</p>
+{% endif %}
 {% endblock %}

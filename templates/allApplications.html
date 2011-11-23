@@ -2,7 +2,9 @@
 {% block title %}Allotments{% endblock %}
 
 {% block content %}
+
 <h2>New Allotments</h2>
+{% if processedApplications %}
 <table class="long">
 <tr class="top-row">
 <th>Loan Name</th>
@@ -29,8 +31,11 @@
 	</tr>
 {% endfor %}
 </table>
-
+{% else %}
+<p>No new allotments</p>
+{% endif %}
 <h2>Under Processing</h2>
+{% if underProcessingApplications %}
 <table width="70%">
 <tr class="top-row">
 <th>Loan Name</th>
@@ -53,7 +58,11 @@
 	</tr>
 {% endfor %}
 </table>
+{% else %}
+<p>No under processing Applications</p>
+{% endif %}
 <h2>Archived Applications</h2>
+{% if archivedApplications %}
 <table class="long">
 <tr class="top-row">
 <th>Loan Name</th>
@@ -85,4 +94,5 @@
 	</tr>
 {% endfor %}
 </table>
+{% endif %}
 {% endblock %}

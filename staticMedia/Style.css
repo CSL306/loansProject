@@ -163,6 +163,10 @@ background:url("images/Button_1.png");
 	color:#FFFFFF;
 	text-decoration:none;
 }
+#side_button_5{padding-left:2.5px;
+	color:#FFFFFF;
+	text-decoration:none;
+}
 #apply_button
 {
 	position:fixed;
@@ -171,7 +175,7 @@ background:url("images/Button_1.png");
 #content
 {
 	position:absolute;
-	width:1000;
+	width:85%;
 	//background:#DBDBDB;
 	//opacity:0.8;
 	margin-left:200px;

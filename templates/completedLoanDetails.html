@@ -12,7 +12,7 @@
 <td>{{details.loanType}}</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
-<td>Principal Amount</td>
+<td>Principal Amount (in Rs.)</td>
 <td>{{details.principal}}</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
@@ -29,7 +29,7 @@
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
 <td>Interest Rate</td>
-<td>{{details.interestRate}}</td>
+<td>{{details.interestRate}}% p.a.</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
 <td>Security</td>
@@ -40,9 +40,10 @@
 <br/>
 <br/>
 <h3>Payment History</h3>
+{% if paymentDetails %}
 <table class="long">
 <tr class="top-row">
-<th>Amount Paid</th>
+<th>Amount Paid (in Rs.)</th>
 <th>Date of Payment</th>
 <th>Payment Type</th>
 <th>Merchant Used</th>
@@ -56,4 +57,7 @@
 </tr>
 {% endfor %}
 </table>
+{% else %}
+<p>No payments made till now.</p>
+{% endif %}
 {% endblock %}

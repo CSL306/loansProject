@@ -3,24 +3,12 @@
 
 {% block content %}
 <form action="" method="post"> 
-<table>
-<tr>
-<th>
-Loan Name: {{activeLoan.loan.name}} <br>
-Installment due date: {{dueDate}} <br>
-Current outstanding loan balance: {{outstandingLoanBalance}} <br>
-</th>
-<th>
-<h1> <center> {{installment}} </center> </h1>
-</th>
-</tr>
-<tr>
-<th>
-<center>
+<h3>Loan Name:</h3> {{activeLoan.loan.name}} 
+<h3>Installment due date:</h3> {{dueDate}} 
+<h3>Current outstanding loan balance:</h3>Rs. {{outstandingLoanBalance}}
+<h3>Installment Amount:</h3>Rs. {{installment}}
+<p align="center">
 <input type="submit" value="Proceed for payment" />
-<center>
-</th>
-</tr>
-</table>
+</p>
 </form>
 {% endblock %}

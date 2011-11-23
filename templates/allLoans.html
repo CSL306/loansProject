@@ -3,16 +3,17 @@
 {% block title %}All Loans{% endblock %}
 {% block content %}
 <h3>Current Loans</h3>
+{% if actDict %}
 <table class="long" cellpadding="4px" >
 <tr class="top-row">
 <th>Loan Name</th>
 <th>Loan Type</th>
-<th>Principal Amount</th>
-<th>Outstanding Amount</th>
+<th>Principal Amount (in Rs.)</th>
+<th>Outstanding Amount (in Rs.)</th>
 <th>Months Remaining</th>
 <th>Interest Type</th>
 <th>Interest Rate</th>
-<th>Monthly Installment</th>
+<th>Monthly Installment (in Rs.)</th>
 <th>Next Installment Due Date</th>
 <th>Security</th>
 <th>Details</th>
@@ -27,16 +28,20 @@
 <td>{{a.outstandingLoanBalance}}</td>
 <td>{{a.monthsLeft}} of {{a.totalMonths}}</td>
 <td>{{a.interestCategory}}</td>
-<td>{{a.interestRate}}</td>
+<td>{{a.interestRate}}% p.a.</td>
 <td>{{a.monthlyInstallment}}</td>
 <td>{{a.nextInstallmentDueDate}}</td>
 <td>{{a.security}}</td>
 <td><a href="{{a.detailLink}}">Details</a></td>
-<td>{{a.prepaymentPenaltyRate}}</td>
+<td>{{a.prepaymentPenaltyRate}}%</td>
 <td width="10%"><button>Prepay Now</button></td>
 </tr>
 {% endfor %}
 </table>
+{% else %}
+<p>You don't have any current loans. <a href="">Apply for a new loan</a></p>
+{% endif %}
+{% if compDict %}
 <h3>Completed Loans</h3>
 <table class="long" cellpadding="4px">
 <tr class="top-row">
@@ -66,6 +71,6 @@
 <td><a href="{{c.detailLink}}">Details</a></td>
 </tr>
 {% endfor %}
-
 </table>
+{% endif %}
 {% endblock %}

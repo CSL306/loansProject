@@ -5,7 +5,7 @@
 <body>-->
 {% block content %}
 <h2>Loan Details</h2>
-<h3>Your Loan of {{details.principal}}<br/>at Rs{{details.monthlyInstallment}}  per months<br/> for next {{details.monthsLeft}} months</h3>
+<h3 align="center">Your Loan is of Rs. {{details.principal}} at Rs. {{details.monthlyInstallment}} per months for next {{details.monthsLeft}} months</h3>
 <table class="vertical" cellpadding="6.5px">
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
 <td>Loan Name</td>
@@ -16,15 +16,15 @@
 <td>{{details.loanType}}</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
-<td>Principal Amount</td>
+<td>Principal Amount (in Rs.)</td>
 <td>{{details.principal}}</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
-<td>Outstanding Amount</td>
+<td>Outstanding Amount (in Rs.)</td>
 <td>{{details.outstandingAmount}}</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
-<td>Monthly Installment</td>
+<td>Monthly Installment (in Rs.)</td>
 <td>{{details.monthlyInstallment}}</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
@@ -53,7 +53,7 @@
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
 <td>Interest Rate</td>
-<td>{{details.interestRate}}</td>
+<td>{{details.interestRate}}% p.a.</td>
 </tr>
 <tr class="out" onmouseover="this.className='over'" onmouseout="this.className='out'">
 <td>Security</td>
@@ -64,9 +64,10 @@
 <br/>
 <br/>
 <h3>Payment History</h3>
+{% if paymentDetails %}
 <table class="long">
 <tr class="top-row">
-<th>Amount Paid</th>
+<th>Amount Paid (in Rs.)</th>
 <th>Date of Payment</th>
 <th>Payment Type</th>
 <th>Merchant Used</th>
@@ -80,5 +81,8 @@
 </tr>
 {% endfor %}
 </table>
+{% else %}
+<p>No payments made till now</p>
+{% endif %}
 {% endblock %}
 

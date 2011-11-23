@@ -3,10 +3,8 @@
 
 {% block content %} 
 <form action="" method="post">
-<table>
-<tr> <th> Loan Name: </th> <th> {{ loanName }} </th> </tr>
-<tr> <th> Amount to prepay: </th> <th> {{form.prepaymentAmount}} </th> 
-<th> 
+<h3> Loan Name: </h3> {{ loanName }}
+<h3> Amount to prepay:</h3>Rs. {{form.prepaymentAmount}}  
 {% if form.prepaymentAmount.errors %}
     <ul>
     {% for error in form.prepaymentAmount.errors %}
@@ -14,9 +12,7 @@
     {% endfor %}
     </ul>
 {% endif %}
-</th> </tr>
-<tr> <th> Note: Prepayment amount should be less than Rs. {{ outstandingAmount }}, the outstanding loan balance for your loan. </th> </tr>
-<tr> <th> <input type="submit" value="Proceed for Payment">  </tr> </th>
-</table>
+<p> *Note: Prepayment amount should be less than Rs. {{ outstandingAmount }}, the outstanding loan balance for your loan. </p>
+<p align="center"><input type="submit" value="Proceed for Payment">  </p>
 </form>
 {% endblock %} 
