@@ -14,23 +14,23 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     (r'^admin/', include(admin.site.urls)),
-    
+
     # URL mappings for API calls
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/$', PaymentsBetween.as_view()),
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/$', PaymentsBetween.as_view()),
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
     (r'^api/paymentsBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/e(?P<end>\d{8})/$', PaymentsBetween.as_view()),
 
-		(r'^api/loansTakenBetween/(?P<cust_id>\d+)/$', LoansTakenBetween.as_view()),
+    (r'^api/loansTakenBetween/(?P<cust_id>\d+)/$', LoansTakenBetween.as_view()),
     (r'^api/loansTakenBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/$', LoansTakenBetween.as_view()),
     (r'^api/loansTakenBetween/(?P<cust_id>\d+)/e(?P<end>\d{8})/$', LoansTakenBetween.as_view()),
     (r'^api/loansTakenBetween/(?P<cust_id>\d+)/s(?P<start>\d{8})/e(?P<end>\d{8})/$', LoansTakenBetween.as_view()),
-    
+
     (r'^api/loansWithOverdueInstallments/$', LoansWithOverdueInstallments.as_view()),
     (r'^api/loansWithOverdueInstallments/(?P<cust_id>\d+)/$', LoansWithOverdueInstallments.as_view()),
-    
+
     (r'^api/loanHistory/(?P<cust_id>\d+)/$', LoanHistory.as_view()),
-    
+
     (r'^api/paymentHistoryOfLoan/(?P<cust_id>\d+)/(?P<lname>[a-zA-Z0-9]+)/$', PaymentHistoryOfLoan.as_view()),
 
     (r'^api/defaulters/$', Defaulters.as_view()),
@@ -79,7 +79,7 @@ urlpatterns = patterns('',
     (r'^newApplication/$', newApplication),
     (r'^newApplicationThanks/$', newApplicationThanks),
     (r'^support/$', support),
-    (r'^supportThanks/$', supportThanks),    
+    (r'^supportThanks/$', supportThanks),
 )
 
 urlpatterns += patterns('django.views.static',
@@ -89,12 +89,12 @@ urlpatterns += patterns('django.views.static',
                         (r'^dueInstallments/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
                         (r'^allPayments/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
                         (r'^base/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
-                        (r'^payInstallment/(\d+)/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}), 
-                        (r'^payInstallmentThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),                          
+                        (r'^payInstallment/(\d+)/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
+                        (r'^payInstallmentThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
                         (r'^payPrepayment/(\d+)/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
                         (r'^payPrepaymentThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
                         (r'^newApplication/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
                         (r'^newApplicationThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
-                        (r'^support/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),                        
+                        (r'^support/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
                         (r'^supportThanks/(?P<path>.*)$', 'serve', {'document_root': 'staticMedia',}),
                         )

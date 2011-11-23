@@ -1,0 +1,160 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>resources &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for resources</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">djangorestframework.resources</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">loans.models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="LoanResource"><a class="viewcode-back" href="../resources.html#resources.LoanResource">[docs]</a><span class="k">class</span> <span class="nc">LoanResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the loan objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/loan</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Loan</span>
+</div>
+<div class="viewcode-block" id="CustomerResource"><a class="viewcode-back" href="../resources.html#resources.CustomerResource">[docs]</a><span class="k">class</span> <span class="nc">CustomerResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the customer objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/customer</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Customer</span>
+</div>
+<div class="viewcode-block" id="ActiveLoanResource"><a class="viewcode-back" href="../resources.html#resources.ActiveLoanResource">[docs]</a><span class="k">class</span> <span class="nc">ActiveLoanResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the active loan objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/activeLoan</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">ActiveLoan</span>
+</div>
+<div class="viewcode-block" id="CompletedLoanResource"><a class="viewcode-back" href="../resources.html#resources.CompletedLoanResource">[docs]</a><span class="k">class</span> <span class="nc">CompletedLoanResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the completed loan objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/completedLoan</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">CompletedLoan</span>
+</div>
+<div class="viewcode-block" id="PaymentResource"><a class="viewcode-back" href="../resources.html#resources.PaymentResource">[docs]</a><span class="k">class</span> <span class="nc">PaymentResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the payment objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/payment</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Payment</span>
+</div>
+<div class="viewcode-block" id="OverdueInstallmentResource"><a class="viewcode-back" href="../resources.html#resources.OverdueInstallmentResource">[docs]</a><span class="k">class</span> <span class="nc">OverdueInstallmentResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the overdue installment objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/overdueInstallment</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">OverdueInstallment</span>
+</div>
+<div class="viewcode-block" id="ApplicationResource"><a class="viewcode-back" href="../resources.html#resources.ApplicationResource">[docs]</a><span class="k">class</span> <span class="nc">ApplicationResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the application objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/application</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Application</span>
+</div>
+<div class="viewcode-block" id="SupportTicketResource"><a class="viewcode-back" href="../resources.html#resources.SupportTicketResource">[docs]</a><span class="k">class</span> <span class="nc">SupportTicketResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This class enumerates ALL the support ticket objects</span>
+
+<span class="sd">  Format of URL: http://localhost:8000/api/supportTicket</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">SupportTicket</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

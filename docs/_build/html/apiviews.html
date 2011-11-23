@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apiviews &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="index.html" />
+    <link rel="next" title="resources" href="resources.html" />
+    <link rel="prev" title="views" href="views.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resources.html" title="resources"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="views"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">LoansProject 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-apiviews">
+<span id="apiviews"></span><h1>apiviews<a class="headerlink" href="#module-apiviews" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="apiviews.Defaulters">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">Defaulters</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#Defaulters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.Defaulters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class defines customers with more than 2 overdue installments as defaulters and returns a list of all such customers.</p>
+<p>Format of URL: <a class="reference external" href="http://localhost:8000/api/defaulters">http://localhost:8000/api/defaulters</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.InstanceReadOnlyModelView">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">InstanceReadOnlyModelView</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#InstanceReadOnlyModelView"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.InstanceReadOnlyModelView" title="Permalink to this definition">¶</a></dt>
+<dd><p>A view which provides default operations for read against a model instance.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.LoanHistory">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">LoanHistory</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#LoanHistory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.LoanHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class takes a customer id and returns all the loans taken by that customer.</p>
+<p>Format of URL: <a class="reference external" href="http://localhost:8000/api/loanHistory">http://localhost:8000/api/loanHistory</a>/&lt;customer_id&gt;</p>
+<p>Example: <a class="reference external" href="http://localhost:8000/api/loanHistory/1">http://localhost:8000/api/loanHistory/1</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.LoansTakenBetween">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">LoansTakenBetween</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#LoansTakenBetween"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.LoansTakenBetween" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method gives all the loans taken by a given customer between a given (optional) start date and a given (optional) end date.
+If start data is missing, it returns all loans taken BEFORE the end date.
+If end date is missing, it returns all loans taken AFTER start date.
+If both are missing, it returns all loans taken by the customer.</p>
+<p>Format of URL: <a class="reference external" href="http://localhost:8000/api/loansTakenBetween">http://localhost:8000/api/loansTakenBetween</a>/&lt;customer_id&gt;/&lt;start_date&gt;/&lt;end_date&gt;</p>
+<p>&lt;start_date&gt;: s&lt;date&gt;</p>
+<p>&lt;end_date&gt;: e&lt;date&gt;</p>
+<p>&lt;date&gt;: ddmmyyyy</p>
+<p>&lt;start_date&gt; and &lt;end_date&gt; are optional.</p>
+<p>Examples: <a class="reference external" href="http://localhost:8000/api/loansTakenBetween/1">http://localhost:8000/api/loansTakenBetween/1</a></p>
+<p><a class="reference external" href="http://localhost:8000/api/loansTakenBetween/1/s17112011">http://localhost:8000/api/loansTakenBetween/1/s17112011</a></p>
+<p><a class="reference external" href="http://localhost:8000/api/loansTakenBetween/1/e19112011">http://localhost:8000/api/loansTakenBetween/1/e19112011</a></p>
+<p><a class="reference external" href="http://localhost:8000/api/loansTakenBetween/1/s17112011/e19112011">http://localhost:8000/api/loansTakenBetween/1/s17112011/e19112011</a></p>
+<p>Note: Don&#8217;t reverse the order of &lt;start_date&gt; and &lt;end_date&gt;</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.LoansWithOverdueInstallments">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">LoansWithOverdueInstallments</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#LoansWithOverdueInstallments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.LoansWithOverdueInstallments" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class takes a customer_id (optional) and returns all the loans taken by the customer which have overdue installments. It returns all loans with overdue installments in case there is no customer_id.</p>
+<p>Format of URL: <a class="reference external" href="http://localhost:8000/api/loansWithOverdueInstallments">http://localhost:8000/api/loansWithOverdueInstallments</a>/&lt;customer_id&gt;</p>
+<p>Examples: <a class="reference external" href="http://localhost:8000/api/loansWithOverdueInstallments">http://localhost:8000/api/loansWithOverdueInstallments</a></p>
+<p><a class="reference external" href="http://localhost:8000/api/loansWithOverdueInstallments/1">http://localhost:8000/api/loansWithOverdueInstallments/1</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.MonthlyInstallment">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">MonthlyInstallment</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#MonthlyInstallment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.MonthlyInstallment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class gives all the monthly installments of all the loans of a given customer.</p>
+<p>Format of URL: <a class="reference external" href="http://localhost:8000/api/monthlyInstallment">http://localhost:8000/api/monthlyInstallment</a>/&lt;customer_id&gt;</p>
+<p>Example: <a class="reference external" href="http://localhost:8000/api/monthlyInstallment/1">http://localhost:8000/api/monthlyInstallment/1</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.PaymentHistoryAllLoans">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">PaymentHistoryAllLoans</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#PaymentHistoryAllLoans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.PaymentHistoryAllLoans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format of URL: <a class="reference external" href="http://localhost:8000/api/paymentHistoryAllLoans">http://localhost:8000/api/paymentHistoryAllLoans</a>/&lt;customer_id&gt;</p>
+<p>Example: <a class="reference external" href="http://localhost:8000/api/paymentHistoryAllLoans/1">http://localhost:8000/api/paymentHistoryAllLoans/1</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.PaymentHistoryOfLoan">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">PaymentHistoryOfLoan</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#PaymentHistoryOfLoan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.PaymentHistoryOfLoan" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class takes a customer id and loan name and returns all the payments corresponding to that loan
+Format of URL: <a class="reference external" href="http://localhost:8000/api/paymentHistoryOfLoan">http://localhost:8000/api/paymentHistoryOfLoan</a>/&lt;customer_id&gt;/&lt;loan_name&gt;</p>
+<p>Examples: <a class="reference external" href="http://localhost:8000/api/paymentHistoryOfLoan/1/NewTestLoan1">http://localhost:8000/api/paymentHistoryOfLoan/1/NewTestLoan1</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apiviews.PaymentsBetween">
+<em class="property">class </em><tt class="descclassname">apiviews.</tt><tt class="descname">PaymentsBetween</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/apiviews.html#PaymentsBetween"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apiviews.PaymentsBetween" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an API function which takes customer id, start date (optional) and end date (optional) and returns a JSON object containing a list of all the payments made by the customer between start and end date.
+If start data is missing, it returns all payments made BEFORE the end date.
+If end date is missing, it returns all payments made AFTER start date.
+If both are missing, it returns all payments made by the customer.</p>
+<p>Format of URL: <a class="reference external" href="http://localhost:8000/api/paymentsBetween">http://localhost:8000/api/paymentsBetween</a>/&lt;customer_id&gt;/&lt;start_date&gt;/&lt;end_date&gt;</p>
+<p>&lt;start_date&gt;: s&lt;date&gt;</p>
+<p>&lt;end_date&gt;: e&lt;date&gt;</p>
+<p>&lt;date&gt;:ddmmyyyy</p>
+<p>&lt;start_date&gt; and &lt;end_date&gt; are optional</p>
+<p>Examples:</p>
+<p><a class="reference external" href="http://localhost:8000/api/paymentsBetween/1">http://localhost:8000/api/paymentsBetween/1</a></p>
+<p><a class="reference external" href="http://localhost:8000/api/paymentsBetween/1/s17112011">http://localhost:8000/api/paymentsBetween/1/s17112011</a></p>
+<p><a class="reference external" href="http://localhost:8000/api/paymentsBetween/1/e19112011">http://localhost:8000/api/paymentsBetween/1/e19112011</a></p>
+<p><a class="reference external" href="http://localhost:8000/api/paymentsBetween/1/s17112011/e19112011">http://localhost:8000/api/paymentsBetween/1/s17112011/e19112011</a></p>
+<p>Note: Don&#8217;t reverse the order of &lt;start_date&gt; and &lt;end_date&gt;</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="views.html"
+                        title="previous chapter">views</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="resources.html"
+                        title="next chapter">resources</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/apiviews.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resources.html" title="resources"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="views"
+             >previous</a> |</li>
+        <li><a href="index.html">LoansProject 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

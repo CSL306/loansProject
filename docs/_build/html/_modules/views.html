@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>views &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for views</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpResponseRedirect</span><span class="p">,</span> <span class="n">Http404</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render_to_response</span>
+<span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">externalapis</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">loans.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">datetime</span><span class="p">;</span>
+
+<span class="k">def</span> <span class="nf">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="k">return</span> <span class="mi">1</span>
+  <span class="c">#sessionId = request.session.get(&quot;id&quot;,&quot;none&quot;)</span>
+  <span class="c">#if (sessionId != &quot;none&quot;):</span>
+    <span class="c">#return IdentityModule.getCustomerId(sessionId)</span>
+  <span class="c">#else:</span>
+    <span class="c">#return HttpResponseRedirect(&quot;/home&quot;)</span>
+
+
+<div class="viewcode-block" id="home"><a class="viewcode-back" href="../views.html#views.home">[docs]</a><span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Home page for a unsigned user.&quot;&quot;&quot;</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;home.html&#39;</span><span class="p">,</span><span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="dueInstallments"><a class="viewcode-back" href="../views.html#views.dueInstallments">[docs]</a><span class="k">def</span> <span class="nf">dueInstallments</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;View for displaying all due and/or overdue installments for all loans of a customer.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerID</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="c"># Get a list of all ActiveLoans associated with that Customer.</span>
+  <span class="n">activeLoanList</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">customerID</span><span class="p">,</span> <span class="n">isActive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+  <span class="c"># For each ActiveLoan get a list of all OverdueInstallment and merge these lists</span>
+  <span class="c"># Make a list of due installments using nextInstallmentDueDate for each ActiveLoan</span>
+  <span class="c"># Sort both these lists chronologically</span>
+  <span class="n">overdueInstallments</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">dueInstallments</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">activeLoan</span> <span class="ow">in</span> <span class="n">activeLoanList</span><span class="p">:</span>
+    <span class="n">ois</span> <span class="o">=</span> <span class="n">OverdueInstallment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span><span class="o">=</span><span class="n">activeLoan</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">oi</span> <span class="ow">in</span> <span class="n">ois</span><span class="p">:</span>
+      <span class="n">overdueInstallments</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;amount&#39;</span><span class="p">:</span><span class="n">oi</span><span class="o">.</span><span class="n">amount</span><span class="p">,</span>
+                                  <span class="s">&#39;dueDate&#39;</span><span class="p">:</span><span class="n">oi</span><span class="o">.</span><span class="n">dueDate</span><span class="p">,</span>
+                                  <span class="s">&#39;loan&#39;</span><span class="p">:</span><span class="n">oi</span><span class="o">.</span><span class="n">loan_id</span><span class="p">})</span>
+    <span class="n">di</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;amount&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">monthlyInstallment</span><span class="p">,</span>
+          <span class="s">&#39;dueDate&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">nextInstallmentDueDate</span><span class="p">,</span>
+          <span class="s">&#39;loan&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+    <span class="n">dueInstallments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">di</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">getDueDate</span><span class="p">(</span><span class="n">installment</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">installment</span><span class="p">[</span><span class="s">&#39;dueDate&#39;</span><span class="p">]</span>
+
+  <span class="n">overdueInstallments</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">overdueInstallments</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">getDueDate</span><span class="p">)</span>
+  <span class="n">dueInstallments</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dueInstallments</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">getDueDate</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;dueInstallments.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="allApplications"><a class="viewcode-back" href="../views.html#views.allApplications">[docs]</a><span class="k">def</span> <span class="nf">allApplications</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  View for displaying all the loan applications a customer has made.</span>
+<span class="sd">  These applications include those which have been approved, rejected or are under consideration.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerID</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="c"># Get a list of all Applications associated with that Customer.</span>
+  <span class="c"># Sort them in three categories.</span>
+  <span class="n">applicationList</span> <span class="o">=</span> <span class="n">Application</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">customerID</span><span class="p">)</span>
+
+  <span class="n">processedApplications</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">underProcessingApplications</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">archivedApplications</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">application</span> <span class="ow">in</span> <span class="n">applicationList</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">application</span><span class="o">.</span><span class="n">isArchived</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+
+      <span class="k">if</span> <span class="n">application</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s">&quot;Active&quot;</span><span class="p">:</span>
+        <span class="n">underProcessingApplications</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                            <span class="s">&#39;name&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                            <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span>
+                                            <span class="s">&#39;amountAppliedFor&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">amountAppliedFor</span><span class="p">,</span>
+                                            <span class="s">&#39;dateApplied&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">dateApplied</span><span class="p">,</span>
+                                            <span class="s">&#39;status&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                                            <span class="s">&#39;remark&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">remark</span><span class="p">,</span>
+                                            <span class="s">&#39;cancelLink&#39;</span><span class="p">:</span><span class="s">&quot;/cancelOrArchive/cancel/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">application</span><span class="o">.</span><span class="n">id</span><span class="p">),})</span>
+      <span class="k">elif</span> <span class="n">application</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s">&quot;Allotted&quot;</span> <span class="ow">or</span> <span class="n">application</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s">&quot;Rejected&quot;</span><span class="p">:</span>
+        <span class="n">processedApplications</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                      <span class="s">&#39;name&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                      <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span>
+                                      <span class="s">&#39;status&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                                      <span class="s">&#39;amountAllotted&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">amountAllotted</span><span class="p">,</span>
+                                      <span class="s">&#39;dateOfAllotment&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">dateOfAllotment</span><span class="p">,</span>
+                                      <span class="s">&#39;interestCategory&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">interestCategory</span><span class="p">,</span>
+                                      <span class="s">&#39;interestRate&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">interestRate</span><span class="p">,</span>
+                                      <span class="s">&#39;amountAppliedFor&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">amountAppliedFor</span><span class="p">,</span>
+                                      <span class="s">&#39;dateApplied&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">dateApplied</span><span class="p">,</span>
+                                      <span class="s">&#39;archiveLink&#39;</span><span class="p">:</span><span class="s">&quot;/cancelOrArchive/archive/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">application</span><span class="o">.</span><span class="n">id</span><span class="p">),})</span>
+
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">archivedApplications</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                   <span class="s">&#39;name&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                   <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span>
+                                   <span class="s">&#39;status&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+                                   <span class="s">&#39;amountAllotted&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">amountAllotted</span><span class="p">,</span>
+                                   <span class="s">&#39;dateOfAllotment&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">dateOfAllotment</span><span class="p">,</span>
+                                   <span class="s">&#39;interestCategory&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">interestCategory</span><span class="p">,</span>
+                                   <span class="s">&#39;interestRate&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">interestRate</span><span class="p">,</span>
+                                   <span class="s">&#39;amountAppliedFor&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">amountAppliedFor</span><span class="p">,</span>
+                                   <span class="s">&#39;dateApplied&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">dateApplied</span><span class="p">,</span>
+                                   <span class="s">&#39;remark&#39;</span><span class="p">:</span><span class="n">application</span><span class="o">.</span><span class="n">remark</span><span class="p">})</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;allApplications.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="allPayments"><a class="viewcode-back" href="../views.html#views.allPayments">[docs]</a><span class="k">def</span> <span class="nf">allPayments</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;View for displaying all payments made by a customer in reverse chronological order&quot;&quot;&quot;</span>
+  <span class="c"># Get customer id and verify is the session is active</span>
+  <span class="n">customer_id</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="c"># Get all the loans for the customer using the customer_id</span>
+  <span class="n">loansList</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">customer_id</span><span class="p">)</span>
+
+  <span class="c">#the list to be returned</span>
+  <span class="n">paymentsList</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="c">#loop over all the loans of the customer and get payments for every loan</span>
+  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">loansList</span><span class="p">:</span>
+      <span class="n">paymentsList</span> <span class="o">+=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span> <span class="o">=</span> <span class="n">l</span><span class="p">)</span>  <span class="c">#add the list of payments corresponding to every loan to paymentsList</span>
+
+  <span class="c">#the following function is defined for use with the sorted method</span>
+  <span class="k">def</span> <span class="nf">getdatePaid</span><span class="p">(</span><span class="n">payment</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">payment</span><span class="o">.</span><span class="n">datePaid</span>
+
+  <span class="c">#sort the payments reverse chronologically</span>
+  <span class="n">paymentsList</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">paymentsList</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">getdatePaid</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;allPayments.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="cancelOrArchive"><a class="viewcode-back" href="../views.html#views.cancelOrArchive">[docs]</a><span class="k">def</span> <span class="nf">cancelOrArchive</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">cancelOrArchive</span><span class="p">,</span> <span class="n">applicationID</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;View for cancelling or archiving an application. Redirects back to allApplications. &quot;&quot;&quot;</span>
+
+  <span class="n">customerID</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">cancelOrArchive</span><span class="o">==</span><span class="s">&quot;cancel&quot;</span><span class="p">:</span>
+    <span class="n">Application</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">applicationID</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&quot;Cancelled&quot;</span><span class="p">,</span> <span class="n">isArchived</span><span class="o">=</span><span class="s">&quot;True&quot;</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="n">cancelOrArchive</span><span class="o">==</span><span class="s">&quot;archive&quot;</span><span class="p">:</span>
+    <span class="n">Application</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">applicationID</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">isArchived</span><span class="o">=</span><span class="s">&quot;True&quot;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="s">&quot;/allApplications/&quot;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="allLoans"><a class="viewcode-back" href="../views.html#views.allLoans">[docs]</a><span class="k">def</span> <span class="nf">allLoans</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Show all loans for a customer.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerID</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="n">loanList</span><span class="o">=</span><span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">customer</span><span class="o">=</span><span class="n">customerID</span><span class="p">)</span>
+  <span class="n">actDict</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">compDict</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">for</span> <span class="n">loan</span> <span class="ow">in</span> <span class="n">loanList</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">loan</span><span class="o">.</span><span class="n">isActive</span><span class="p">:</span>
+      <span class="n">actDict</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                      <span class="s">&#39;name&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                      <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span>
+                      <span class="s">&#39;principal&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">principal</span><span class="p">,</span>
+                      <span class="s">&#39;totalMonths&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span><span class="p">,</span>
+                      <span class="s">&#39;dateTaken&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">dateTaken</span><span class="p">,</span>
+                      <span class="s">&#39;expectedDateOfTermination&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">expectedDateOfTermination</span><span class="p">,</span>
+                      <span class="s">&#39;outstandingLoanBalance&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span><span class="p">,</span>
+                      <span class="s">&#39;monthsLeft&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span> <span class="o">-</span> <span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">elapsedMonths</span><span class="p">,</span>
+                      <span class="s">&#39;interestCategory&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">interestCategory</span><span class="p">,</span>
+                      <span class="s">&#39;interestRate&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">interestRate</span><span class="p">,</span>
+                      <span class="s">&#39;monthlyInstallment&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">monthlyInstallment</span><span class="p">,</span>
+                      <span class="s">&#39;nextInstallmentDueDate&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">nextInstallmentDueDate</span><span class="p">,</span>
+                      <span class="s">&#39;prepaymentPenaltyRate&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span><span class="o">.</span><span class="n">prepaymentPenaltyRate</span><span class="p">,</span>
+                      <span class="s">&#39;security&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">security</span><span class="p">,</span>
+                      <span class="s">&#39;detailLink&#39;</span><span class="p">:</span><span class="s">&quot;../loanDetails/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">loan</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+      <span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">compDict</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                       <span class="s">&#39;name&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                       <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span>
+                       <span class="s">&#39;principal&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">principal</span><span class="p">,</span>
+                       <span class="s">&#39;totalMonths&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span><span class="p">,</span>
+                       <span class="s">&#39;dateTaken&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">dateTaken</span><span class="p">,</span>
+                       <span class="s">&#39;dateOfCompletion&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">completedloan</span><span class="o">.</span><span class="n">dateOfCompletion</span><span class="p">,</span>
+                       <span class="s">&#39;totalAmountPaid&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">completedloan</span><span class="o">.</span><span class="n">totalAmountPaid</span><span class="p">,</span>
+                       <span class="s">&#39;interestCategory&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">interestCategory</span><span class="p">,</span>
+                       <span class="s">&#39;averageInterestRate&#39;</span><span class="p">:</span><span class="n">loan</span><span class="o">.</span><span class="n">completedloan</span><span class="o">.</span><span class="n">averageInterestRate</span><span class="p">,</span>
+                       <span class="s">&#39;detailLink&#39;</span><span class="p">:</span><span class="s">&quot;../loanDetails/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">loan</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+      <span class="p">})</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;allLoans.html&#39;</span><span class="p">,</span><span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="loanDetails"><a class="viewcode-back" href="../views.html#views.loanDetails">[docs]</a><span class="k">def</span> <span class="nf">loanDetails</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="n">loanId</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Display the loan details for a loanId&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="n">loan</span> <span class="o">=</span> <span class="n">Loan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">loanId</span><span class="p">)</span>
+
+  <span class="c"># Retrieve the payment list for a loan</span>
+  <span class="n">paymentList</span> <span class="o">=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan</span><span class="o">=</span><span class="n">loanId</span><span class="p">)</span>
+  <span class="n">paymentDetails</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">payment</span> <span class="ow">in</span> <span class="n">paymentList</span><span class="p">:</span>
+    <span class="n">paymentDetails</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;amount&#39;</span><span class="p">:</span><span class="n">payment</span><span class="o">.</span><span class="n">amount</span><span class="p">,</span>
+                           <span class="s">&#39;datePaid&#39;</span><span class="p">:</span><span class="n">payment</span><span class="o">.</span><span class="n">datePaid</span><span class="p">,</span>
+                           <span class="s">&#39;type&#39;</span><span class="p">:</span><span class="n">payment</span><span class="o">.</span><span class="n">paymentType</span><span class="p">,</span>
+                           <span class="s">&#39;merchant&#39;</span><span class="p">:</span><span class="n">payment</span><span class="o">.</span><span class="n">merchantUsed</span><span class="p">,</span>
+    <span class="p">})</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">loan</span><span class="o">.</span><span class="n">isActive</span><span class="p">):</span>
+    <span class="n">activeLoan</span> <span class="o">=</span> <span class="n">loan</span><span class="o">.</span><span class="n">activeloan</span>
+    <span class="n">details</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+               <span class="s">&#39;name&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+               <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span>
+               <span class="s">&#39;principal&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">principal</span><span class="p">,</span>
+               <span class="s">&#39;totalMonths&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span><span class="p">,</span>
+               <span class="s">&#39;dateTaken&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">dateTaken</span><span class="p">,</span>
+               <span class="s">&#39;expTermination&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">expectedDateOfTermination</span><span class="p">,</span>
+               <span class="s">&#39;outstandingAmount&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span><span class="p">,</span>
+               <span class="s">&#39;monthsLeft&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">elapsedMonths</span><span class="p">,</span>
+               <span class="s">&#39;interestCategory&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">interestCategory</span><span class="p">,</span>
+               <span class="s">&#39;interestRate&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">interestRate</span><span class="p">,</span>
+               <span class="s">&#39;monthlyInstallment&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">monthlyInstallment</span><span class="p">,</span>
+               <span class="s">&#39;nextDueInstallment&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">nextInstallmentDueDate</span><span class="p">,</span>
+               <span class="s">&#39;prepayPenalty&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">prepaymentPenaltyRate</span><span class="p">,</span>
+               <span class="s">&#39;security&#39;</span><span class="p">:</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">security</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;activeLoanDetails.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">completedLoan</span> <span class="o">=</span> <span class="n">loan</span><span class="o">.</span><span class="n">completedloan</span>
+    <span class="n">details</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+               <span class="s">&#39;name&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+               <span class="s">&#39;loanType&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">loanType</span><span class="p">,</span>
+               <span class="s">&#39;principal&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">principal</span><span class="p">,</span>
+               <span class="s">&#39;totalMonths&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span><span class="p">,</span>
+               <span class="s">&#39;dateTaken&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">dateTaken</span><span class="p">,</span>
+               <span class="s">&#39;dateOfCompletion&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">dateOfCompletion</span><span class="p">,</span>
+               <span class="s">&#39;totalAmountPaid&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">totalAmountPaid</span><span class="p">,</span>
+               <span class="s">&#39;interestCategory&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">interestCategory</span><span class="p">,</span>
+               <span class="s">&#39;interestRate&#39;</span><span class="p">:</span><span class="n">completedLoan</span><span class="o">.</span><span class="n">averageInterestRate</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;completedLoanDetails.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="payInstallment"><a class="viewcode-back" href="../views.html#views.payInstallment">[docs]</a><span class="k">def</span> <span class="nf">payInstallment</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">loanId</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;View for paying an installment&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+    <span class="n">activeLoan</span> <span class="o">=</span> <span class="n">ActiveLoan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">loan__id</span><span class="o">=</span><span class="n">loanId</span><span class="p">)</span>
+
+    <span class="c"># Adds the payment to Payment model</span>
+    <span class="n">payment</span> <span class="o">=</span> <span class="n">Payment</span><span class="p">(</span><span class="n">amount</span><span class="o">=</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">monthlyInstallment</span><span class="p">,</span> <span class="n">loan</span><span class="o">=</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="p">,</span> <span class="n">paymentType</span><span class="o">=</span><span class="s">&quot;installment&quot;</span><span class="p">,</span> <span class="n">merchantUsed</span><span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">)</span>
+    <span class="n">payment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="c"># Updates the activeLoan or makes it a completed loan if this was the last installment.</span>
+    <span class="k">if</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">elapsedMonths</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">originalMonths</span><span class="p">:</span>
+      <span class="n">paymentList</span> <span class="o">=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan__id</span><span class="o">=</span><span class="n">loanId</span><span class="p">)</span>
+      <span class="n">totalAmountPaid</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">for</span> <span class="n">payment</span> <span class="ow">in</span> <span class="n">paymentList</span><span class="p">:</span>
+        <span class="n">totalAmountPaid</span> <span class="o">+=</span> <span class="n">payment</span><span class="o">.</span><span class="n">amount</span>
+      <span class="n">averageInterestRate</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">interestRate</span>
+      <span class="n">completedLoan</span> <span class="o">=</span> <span class="n">CompletedLoan</span><span class="p">(</span><span class="n">loan</span><span class="o">=</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="p">,</span> <span class="n">totalAmountPaid</span><span class="o">=</span><span class="n">totalAmountPaid</span><span class="p">,</span> <span class="n">averageInterestRate</span><span class="o">=</span><span class="n">averageInterestRate</span><span class="p">)</span>
+      <span class="n">completedLoan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+      <span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">isActive</span> <span class="o">=</span> <span class="bp">False</span>
+      <span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+      <span class="n">activeLoan</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">activeLoan</span><span class="o">.</span><span class="n">elapsedMonths</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">activeLoan</span><span class="o">.</span><span class="n">nextInstallmentDueDate</span> <span class="o">+=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+      <span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">computeOutstandingLoanBalance</span><span class="p">()</span>
+      <span class="n">activeLoan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="s">&#39;/payInstallmentThanks/&#39;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">activeLoan</span> <span class="o">=</span> <span class="n">ActiveLoan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">loan__id</span><span class="o">=</span><span class="n">loanId</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ActiveLoan</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="n">Http404</span>
+    <span class="n">dueDate</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">nextInstallmentDueDate</span>
+    <span class="n">installment</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">monthlyInstallment</span>
+    <span class="n">outstandingLoanBalance</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span>
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;payInstallment.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="payInstallmentThanks"><a class="viewcode-back" href="../views.html#views.payInstallmentThanks">[docs]</a><span class="k">def</span> <span class="nf">payInstallmentThanks</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Redirects to thank you page after the payment of an installment.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;payInstallmentThanks.html&#39;</span><span class="p">,{})</span>
+
+</div>
+<div class="viewcode-block" id="newApplication"><a class="viewcode-back" href="../views.html#views.newApplication">[docs]</a><span class="k">def</span> <span class="nf">newApplication</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Files a new application.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+      <span class="n">form</span> <span class="o">=</span> <span class="n">ApplicationForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+          <span class="n">cd</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span>
+          <span class="n">application</span> <span class="o">=</span> <span class="n">Application</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">cd</span><span class="p">[</span><span class="s">&quot;loanName&quot;</span><span class="p">],</span> <span class="n">amountAppliedFor</span><span class="o">=</span><span class="n">cd</span><span class="p">[</span><span class="s">&quot;loanAmount&quot;</span><span class="p">],</span> <span class="n">loanType</span><span class="o">=</span><span class="n">cd</span><span class="p">[</span><span class="s">&quot;loanCategory&quot;</span><span class="p">],</span> <span class="n">security</span><span class="o">=</span><span class="n">cd</span><span class="p">[</span><span class="s">&quot;security&quot;</span><span class="p">],</span> <span class="n">customer</span><span class="o">=</span><span class="n">Customer</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">customerId</span><span class="p">))</span>
+          <span class="n">application</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+          <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="s">&#39;/newApplicationThanks/&#39;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+      <span class="n">form</span> <span class="o">=</span> <span class="n">ApplicationForm</span><span class="p">()</span>
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;newApplication.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="newApplicationThanks"><a class="viewcode-back" href="../views.html#views.newApplicationThanks">[docs]</a><span class="k">def</span> <span class="nf">newApplicationThanks</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Thank you page after a new application request.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;newApplicationThanks.html&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="payPrepayment"><a class="viewcode-back" href="../views.html#views.payPrepayment">[docs]</a><span class="k">def</span> <span class="nf">payPrepayment</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">loanId</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Prepay an amount for a loan.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">activeLoan</span> <span class="o">=</span> <span class="n">ActiveLoan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">loan__id</span><span class="o">=</span><span class="n">loanId</span><span class="p">)</span>
+  <span class="k">except</span> <span class="n">ActiveLoan</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">Http404</span>
+
+  <span class="n">loanName</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">name</span>
+  <span class="n">outstandingAmount</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span>
+  <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+      <span class="n">form</span> <span class="o">=</span> <span class="n">PrepaymentForm</span><span class="p">(</span><span class="n">loanId</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+          <span class="n">cd</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span>
+          <span class="c">#amount = cd[&quot;prepaymentAmount&quot;]/(1+(activeLoan.prepaymentPenaltyRate/100))</span>
+          <span class="n">amount</span> <span class="o">=</span> <span class="n">cd</span><span class="p">[</span><span class="s">&quot;prepaymentAmount&quot;</span><span class="p">]</span>
+          <span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span> <span class="o">-</span> <span class="n">amount</span>
+          <span class="k">if</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">activeLoan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">isActive</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">paymentList</span> <span class="o">=</span> <span class="n">Payment</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">loan__id</span><span class="o">=</span><span class="n">loanId</span><span class="p">)</span>
+            <span class="n">totalAmountPaid</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">payment</span> <span class="ow">in</span> <span class="n">paymentList</span><span class="p">:</span>
+              <span class="n">totalAmountPaid</span> <span class="o">+=</span> <span class="n">payment</span><span class="o">.</span><span class="n">amount</span>
+            <span class="n">averageInterestRate</span> <span class="o">=</span> <span class="n">activeLoan</span><span class="o">.</span><span class="n">interestRate</span>
+            <span class="n">completedLoan</span> <span class="o">=</span> <span class="n">CompletedLoan</span><span class="p">(</span><span class="n">loan</span><span class="o">=</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="p">,</span> <span class="n">totalAmountPaid</span><span class="o">=</span><span class="n">totalAmountPaid</span><span class="p">,</span> <span class="n">averageInterestRate</span><span class="o">=</span><span class="n">averageInterestRate</span><span class="p">)</span>
+            <span class="n">completedLoan</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">activeLoan</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+          <span class="c"># Adds the payment to Payment model</span>
+          <span class="n">payment</span> <span class="o">=</span> <span class="n">Payment</span><span class="p">(</span><span class="n">amount</span><span class="o">=</span><span class="n">amount</span><span class="p">,</span> <span class="n">loan</span><span class="o">=</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">loan</span><span class="p">,</span> <span class="n">paymentType</span><span class="o">=</span><span class="s">&quot;prepayment&quot;</span><span class="p">,</span> <span class="n">merchantUsed</span><span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">)</span>
+          <span class="n">payment</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+          <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="s">&#39;/payPrepaymentThanks/&#39;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+      <span class="n">form</span> <span class="o">=</span> <span class="n">PrepaymentForm</span><span class="p">(</span><span class="n">loanId</span><span class="p">,</span> <span class="n">initial</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;prepaymentAmount&#39;</span><span class="p">:</span> <span class="n">outstandingAmount</span><span class="o">/</span><span class="mi">2</span><span class="p">})</span>
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;payPrepayment.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="payPrepaymentThanks"><a class="viewcode-back" href="../views.html#views.payPrepaymentThanks">[docs]</a><span class="k">def</span> <span class="nf">payPrepaymentThanks</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Thank you page after the payment of an installment.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;payPrepaymentThanks.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="support"><a class="viewcode-back" href="../views.html#views.support">[docs]</a><span class="k">def</span> <span class="nf">support</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;View for filing a support request.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span><span class="p">:</span>
+      <span class="n">form</span> <span class="o">=</span> <span class="n">SupportForm</span><span class="p">(</span><span class="n">customerId</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+          <span class="n">cd</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span>
+          <span class="n">ticket</span> <span class="o">=</span> <span class="n">SupportTicket</span><span class="p">(</span><span class="n">loan</span><span class="o">=</span><span class="n">cd</span><span class="p">[</span><span class="s">&quot;loan&quot;</span><span class="p">],</span> <span class="n">complaintType</span><span class="o">=</span><span class="n">cd</span><span class="p">[</span><span class="s">&quot;complaintType&quot;</span><span class="p">],</span> <span class="n">complaintMessage</span><span class="o">=</span><span class="n">cd</span><span class="p">[</span><span class="s">&quot;message&quot;</span><span class="p">])</span>
+          <span class="n">ticket</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+          <span class="k">return</span> <span class="n">HttpResponseRedirect</span><span class="p">(</span><span class="s">&#39;/supportThanks/&#39;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+      <span class="n">form</span> <span class="o">=</span> <span class="n">SupportForm</span><span class="p">(</span><span class="n">customerId</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="s">&#39;Please enter your message here.&#39;</span><span class="p">})</span>
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;support.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="supportThanks"><a class="viewcode-back" href="../views.html#views.supportThanks">[docs]</a><span class="k">def</span> <span class="nf">supportThanks</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Thank you page after a support request submission.&quot;&quot;&quot;</span>
+
+  <span class="c"># Get the customerId and verify if the session is active.</span>
+  <span class="n">customerId</span> <span class="o">=</span> <span class="n">getCustomerId</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;supportThanks.html&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">())</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

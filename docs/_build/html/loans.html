@@ -1,0 +1,195 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>loans.models &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="index.html" />
+    <link rel="next" title="views" href="views.html" />
+    <link rel="prev" title="Welcome to LoansProject’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="views"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to LoansProject’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">LoansProject 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-loans.models">
+<span id="loans-models"></span><h1>loans.models<a class="headerlink" href="#module-loans.models" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="loans.models.ActiveLoan">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">ActiveLoan</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#ActiveLoan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.ActiveLoan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each ActiveLoan is an instance of this class.</p>
+<dl class="method">
+<dt id="loans.models.ActiveLoan.computeMonthlyInstallment">
+<tt class="descname">computeMonthlyInstallment</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/models.html#ActiveLoan.computeMonthlyInstallment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.ActiveLoan.computeMonthlyInstallment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the monthly installment based on the current outstanding loan balance, monthly interest rate and remaining months.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.models.ActiveLoan.computeOutstandingLoanBalance">
+<tt class="descname">computeOutstandingLoanBalance</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/models.html#ActiveLoan.computeOutstandingLoanBalance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.ActiveLoan.computeOutstandingLoanBalance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the balance outstanding after elapsedMonths have passed (assuming all installments were paid on time.)
+Notes on usage: Call this function once after paying every installment (when you increase elapsedMonths). Set outstandingLoanBalance using the value returned by this function. After that use that variable to query the outstanding loan balance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.models.ActiveLoan.save">
+<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#ActiveLoan.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.ActiveLoan.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates monthlyInstallment and saves the entry</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="loans.models.Application">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">Application</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#Application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>This stores information a user fills while applying for a new loan. This information is transferred to loan object once the application is approved.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="loans.models.CompletedLoan">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">CompletedLoan</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#CompletedLoan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.CompletedLoan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record for every completed loan.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="loans.models.Customer">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">Customer</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#Customer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.Customer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each customer of the bank is an instance of this class.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="loans.models.Loan">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">Loan</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#Loan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.Loan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each loan a customer take is an instance of this class. A customer can be associated with one or more loans.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="loans.models.OverdueInstallment">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">OverdueInstallment</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#OverdueInstallment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.OverdueInstallment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class stores all the installments which have passed their due dates and haven&#8217;t been paid yet</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="loans.models.Payment">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">Payment</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#Payment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.Payment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record storing every transaction</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="loans.models.SupportTicket">
+<em class="property">class </em><tt class="descclassname">loans.models.</tt><tt class="descname">SupportTicket</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#SupportTicket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.SupportTicket" title="Permalink to this definition">¶</a></dt>
+<dd><p>This stores information about any complaint a user might have.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="loans.models.firstSaveHandler">
+<tt class="descclassname">loans.models.</tt><tt class="descname">firstSaveHandler</tt><big>(</big><em>sender</em>, <em>instance</em>, <em>created</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/loans/models.html#firstSaveHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.models.firstSaveHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to set the outstanding loan balance and elapsed months when the loan object is created.
+Argument Explanation:
+sender - The model class. (ActiveLoan)
+instance - The actual instance being saved.
+created - Boolean; True if a new record was created.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to LoansProject&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="views.html"
+                        title="next chapter">views</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/loans.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="views.html" title="views"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to LoansProject’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">LoansProject 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
