@@ -1,7 +1,5 @@
 from djangorestframework.views import ModelView, View;
 from djangorestframework.mixins import ReadModelMixin, InstanceMixin
-from djangorestframework.renderers import JSONRenderer;
-from djangorestframework.serializer import Serializer;
 from loans.models import *
 
 import datetime;
@@ -71,7 +69,7 @@ class PaymentsBetween(View):
     for payment in paymentsList:
       result.append(payment.serialize());  #serialize all the payment objects so that they can be converted to JSON
 
-    return JSONRenderer(self).render(result)  #convert to JSON
+    return result
 
 
 class PaymentHistoryOfLoan(View):
@@ -92,7 +90,7 @@ class PaymentHistoryOfLoan(View):
     for payment in paymentsList:
       result.append(payment.serialize())  #serialize all the payment objects
 
-    return JSONRenderer(self).render(result)  #convert to JSON
+    return result
 
 
 class Defaulters(View):
@@ -117,7 +115,7 @@ class Defaulters(View):
     for defaulter in defaulters:
       result.append(defaulter)  #serialize all the customer objects
 
-    return JSONRenderer(self).render(result)  #convert to JSON
+    return result
 
 
 class PaymentHistoryAllLoans(View):
@@ -142,7 +140,7 @@ class PaymentHistoryAllLoans(View):
     for payment in paymentsList:
       result.append(payment.serialize())  #serialize
 
-    return JSONRenderer(self).render(result)  #convert to JSON
+    return result
 
 
 class MonthlyInstallment(View):
@@ -162,4 +160,4 @@ class MonthlyInstallment(View):
       activeLoan = ActiveLoan.objects.filter(loan = l)  #for every loan, get the corresponding active loan
       result.append({'cust_id': l.customer.name, 'loanType': l.loanType, 'MonthlyInstallment': activeLoan[0].monthlyInstallment, 'DueDate': activeLoan[0].nextInstallmentDueDate,})  #serialize
 
-    return JSONRenderer(self).render(result)  #convert to JSON
+    return result
