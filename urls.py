@@ -66,7 +66,7 @@ urlpatterns = patterns('',
     (r'^api/supportTicket/(?P<pk>[^/]+)/$', InstanceReadOnlyModelView.as_view(resource=SupportTicketResource)),
 
     # URL mappings for page views
-    (r'^home/$', home),
+    (r'^home/$',dueInstallments),
     (r'^dueInstallments/$', dueInstallments),
     (r'^allApplications/$', allApplications),
     (r'^allPayments/$', allPayments),
@@ -85,6 +85,7 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('django.views.static',
+                        (r'^home/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
                         (r'^allApplications/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
                         (r'^allLoans/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
                         (r'^loanDetails/(\d+)/(?P<path>.*)$','serve', {'document_root': 'staticMedia',}),
