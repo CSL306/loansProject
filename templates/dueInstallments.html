@@ -19,7 +19,7 @@
 <td>{{inst.loan}}</td>
 <td>{{inst.amount}}</td>
 <td>{{inst.dueDate}}</td>
-<td><a href="../payInstallment/{{inst.loan}}" id="button-link"><button>Pay Now</button></a></td>
+<td><a href="{{inst.payLink}}" id="button-link"><button>Pay Now</button></a></td>
 </tr>
 {% endfor %}
 {% else %}
@@ -36,7 +36,7 @@
 <td>{{inst.loan}}</td>
 <td>{{inst.amount}}</td>
 <td>{{inst.dueDate}}</td>
-<td><a href="../payInstallment/{{inst.loan}}" id="button-link"><button>Pay Now</button></a></td>
+<td><a href="{{inst.payLink}}" id="button-link"><button>Pay Now</button></a></td>
 </tr>
 {% endfor %}
 {% endif %}

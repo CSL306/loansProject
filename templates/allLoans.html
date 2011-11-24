@@ -39,7 +39,7 @@
 {% endfor %}
 </table>
 {% else %}
-<p>You don't have any current loans. <a href="">Apply for a new loan</a></p>
+<p>You don't have any current loans. <a href="../newApplication/">Apply for a new loan</a></p>
 {% endif %}
 {% if compDict %}
 <h3>Completed Loans</h3>
@@ -68,7 +68,7 @@
 <td>{{c.dateOfCompletion}}</td>
 <td>{{c.interestCategory}}</td>
 <td>{{c.averageInterestRate}}</td>
-<td width="10%"><a href="{{a.prepayNowLink}}" id="button-link"><button>Prepay Now</button></a></td>
+<td><a href="{{c.detailLink}}">Details</a></td>
 </tr>
 {% endfor %}
 </table>

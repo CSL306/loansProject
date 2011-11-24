@@ -39,10 +39,14 @@ def dueInstallments(request):
     for oi in ois:
       overdueInstallments.append({'amount':oi.amount,
                                   'dueDate':oi.dueDate,
-                                  'loan':oi.loan.name})
+                                  'loan':oi.loan.name,
+                                  'payLink':"../payInstallment/"+str(oi.loan.id),
+      })
     di = {'amount':activeLoan.activeloan.monthlyInstallment,
           'dueDate':activeLoan.activeloan.nextInstallmentDueDate,
-          'loan':activeLoan.name}
+          'loan':activeLoan.name,
+          'payLink':"../payInstallment/"+str(activeLoan.id),
+    }
     dueInstallments.append(di)
 
   def getDueDate(installment):
@@ -189,7 +193,6 @@ def allLoans(request):
                        'interestCategory':loan.interestCategory,
                        'averageInterestRate':loan.completedloan.averageInterestRate,
                        'detailLink':"../loanDetails/"+str(loan.id),
-                       'prepayNowLink':"/payPrepayment/"+str(loan.id),
                        })
 
   return render_to_response('allLoans.html',locals())
