@@ -1,0 +1,59 @@
+===Project Demonstration===
+Memory Maps:
+loansProject/requirementAnalysis/Loans.mm
+loansProject/requirementAnalysis/Interaction.mm
+
+Planner:
+loansProject/requirementAnalysis/plan.planner
+
+User Stories:
+loansProject/requirementAnalysis/UserStories.pdf
+
+UML Diagrams:
+loansProject/requirementAnalysis/ClassDiagram.zargo
+
+Flow Diagrams/UI Mockups:
+loansProject/requirementAnalysis/ui_mockups/
+
+Code Documentation:
+loansProject/docs/index.html
+
+Git Hosting:
+https://github.com/CSL306/loansProject
+
+IIT Ropar Trac Wiki:
+http://10.1.0.112/trac/wiki/Loans
+
+Test Cases:
+$ python manage.py test loans
+
+Phase 1 Demonstration:
+$ git checkout v0.1
+
+Phase 1 Demonstration:
+$ git checkout v0.2
+
+API Documentation:
+loansProject/docs/APIDocumentation/APIDocumentation
+
+
+
+===Tools Used===
+We used Freemind to prepare the mindmaps. (http://freemind.sourceforge.net/)
+We used Planner to plan and distribute the work. (http://live.gnome.org/Planner)
+We used Google Docs to collaborate in writing user stories. (https://docs.google.com)
+We used ArgoUML to make the class diagrams. (http://argouml.tigris.org/)
+We used Balsamiq Mockups to make the UI mockups. (http://www.balsamiq.com/products/mockups)
+We used Sphinx to generate automatic documentation. (http://sphinx.pocoo.org/)
+We used GitHub for hosting our git repo and for issue tracking. (https://github.com)
+We used Django's builtin unit test framework to write test cases.
+We used Django REST framework to build self-describing RESTful Web APIs.(http://django-rest-framework.org/)
+
+
+
+===Members===
+Anuj Jain
+Divya Sharma
+Ishan Chhabra
+Rohit Agarwal
+Shikhar Srivastav
