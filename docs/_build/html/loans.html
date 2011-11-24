@@ -134,6 +134,91 @@ created - Boolean; True if a new record was created.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-loans.tests">
+<span id="loans-tests"></span><h1>loans.tests<a class="headerlink" href="#module-loans.tests" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="loans.tests.SimpleTest">
+<em class="property">class </em><tt class="descclassname">loans.tests.</tt><tt class="descname">SimpleTest</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>A collection of unit tests.</p>
+<dl class="attribute">
+<dt id="loans.tests.SimpleTest.fixtures">
+<tt class="descname">fixtures</tt><em class="property"> = ['loans']</em><a class="headerlink" href="#loans.tests.SimpleTest.fixtures" title="Permalink to this definition">¶</a></dt>
+<dd><p>The fixture data has already been dumped and is a precondition for all the tests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.numEntries">
+<tt class="descname">numEntries</tt><big>(</big><em>string</em>, <em>response</em><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.numEntries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.numEntries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an integer number - the length of a dictionary/list present in the response.context object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_allLoans">
+<tt class="descname">test_allLoans</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_allLoans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_allLoans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID.
+Page Behaviour: Displays all the loans taken by a customer.
+Test: Testing whether the reqiured information is prespent/passsed and whether the routing has been configured properly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_allPayments">
+<tt class="descname">test_allPayments</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_allPayments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_allPayments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID.
+Page Behaviour: Displays all the payments made by the customer.
+Test: Testing whether the routing has been configured properly</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_applications">
+<tt class="descname">test_applications</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_applications"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_applications" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID. The customer has applied for some loans.
+Page Behaviour: Displays all the loan applications of a customer.
+Test: Testing whether the routing and Archive and Cancel/Archive buttons has been configured properly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_dueInstallments">
+<tt class="descname">test_dueInstallments</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_dueInstallments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_dueInstallments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID. The customer has an active loan.
+Page Behaviour: Displays all the dueinstallments for a customer.
+Test: Testing whether the reqiured information is prespent/passsed and whether the routing has been configured properly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_newApplication">
+<tt class="descname">test_newApplication</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_newApplication"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_newApplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID.
+Page Behaviour: New Loan Applications is being created.
+Test: Testing whether all fields are being sent as required and whether the routing has been configured properly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_payInstallment">
+<tt class="descname">test_payInstallment</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_payInstallment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_payInstallment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID. The customer has an active loan.
+Page Behaviour: Displays the installment information.
+Test: Testing whether the routing has been configured and the database is updated properly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_payPrepayment">
+<tt class="descname">test_payPrepayment</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_payPrepayment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_payPrepayment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID.
+Page Behaviour: Displays the form to enter prepayment amount.
+Test: Testing whether the routing has been configured properly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="loans.tests.SimpleTest.test_support">
+<tt class="descname">test_support</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/loans/tests.html#SimpleTest.test_support"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loans.tests.SimpleTest.test_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: The user is logged in and has a valid customer ID.
+Page Behaviour: Displays a form to file a support request.
+Test: Testing whether the routing has been configured properly</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 
 
           </div>
@@ -141,6 +226,12 @@ created - Boolean; True if a new record was created.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">loans.models</a></li>
+<li><a class="reference internal" href="#module-loans.tests">loans.tests</a></li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to LoansProject&#8217;s documentation!</a></p>

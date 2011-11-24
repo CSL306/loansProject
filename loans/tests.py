@@ -2,6 +2,9 @@ from django.test import *
 from loans.models import *
 
 class SimpleTest(TestCase):
+  """
+  A collection of unit tests.
+  """
   fixtures=['loans']
   """
   The fixture data has already been dumped and is a precondition for all the tests.

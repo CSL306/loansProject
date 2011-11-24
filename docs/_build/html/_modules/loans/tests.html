@@ -1,0 +1,244 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>loans.tests &mdash; LoansProject 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="LoansProject 0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for loans.tests</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">loans.models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="SimpleTest"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest">[docs]</a><span class="k">class</span> <span class="nc">SimpleTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  A collection of unit tests.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">fixtures</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;loans&#39;</span><span class="p">]</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  The fixture data has already been dumped and is a precondition for all the tests.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">=</span><span class="n">Client</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SimpleTest.numEntries"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.numEntries">[docs]</a>  <span class="k">def</span> <span class="nf">numEntries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">string</span><span class="p">,</span><span class="n">response</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an integer number - the length of a dictionary/list present in the response.context object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">alist</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">string</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alist</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SimpleTest.test_newApplication"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_newApplication">[docs]</a>  <span class="k">def</span> <span class="nf">test_newApplication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID.</span>
+<span class="sd">    Page Behaviour: New Loan Applications is being created.</span>
+<span class="sd">    Test: Testing whether all fields are being sent as required and whether the routing has been configured properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/newApplication/&#39;</span><span class="p">,{</span><span class="s">&#39;id_loanName&#39;</span><span class="p">:</span><span class="s">&#39;Test&#39;</span><span class="p">,</span>
+                                        <span class="s">&#39;id_loanAmount&#39;</span><span class="p">:</span><span class="mi">100000</span><span class="p">,</span> 
+                                        <span class="s">&#39;id_loanCategory&#39;</span><span class="p">:</span><span class="s">&#39;Home&#39;</span><span class="p">,</span>
+                                        <span class="s">&#39;id_security&#39;</span><span class="p">:</span><span class="s">&#39;Car&#39;</span><span class="p">,</span>
+                                        <span class="s">&#39;id_acceptedTerms&#39;</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span>
+    <span class="p">})</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s">&#39;request&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">POST</span><span class="p">),</span><span class="mi">5</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SimpleTest.test_dueInstallments"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_dueInstallments">[docs]</a>  <span class="k">def</span> <span class="nf">test_dueInstallments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID. The customer has an active loan.</span>
+<span class="sd">    Page Behaviour: Displays all the dueinstallments for a customer.</span>
+<span class="sd">    Test: Testing whether the reqiured information is prespent/passsed and whether the routing has been configured properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/dueInstallments/&#39;</span><span class="p">)</span>
+    
+    <span class="n">oi</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s">&#39;overdueInstallments&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">oi</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">4</span><span class="p">)</span>
+    
+    <span class="n">di</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s">&#39;dueInstallments&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">di</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">4</span><span class="p">)</span>
+    
+    <span class="n">payLink</span><span class="o">=</span><span class="n">oi</span><span class="p">[</span><span class="s">&#39;payLink&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">payLink</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SimpleTest.test_allLoans"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_allLoans">[docs]</a>  <span class="k">def</span> <span class="nf">test_allLoans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID.</span>
+<span class="sd">    Page Behaviour: Displays all the loans taken by a customer.</span>
+<span class="sd">    Test: Testing whether the reqiured information is prespent/passsed and whether the routing has been configured properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/allLoans/&#39;</span><span class="p">)</span>
+    
+    <span class="n">activeLoan</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s">&#39;actDict&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">activeLoan</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">14</span><span class="p">)</span>
+    
+    <span class="n">prepayLink</span><span class="o">=</span><span class="n">activeLoan</span><span class="p">[</span><span class="s">&#39;prepayNowLink&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prepayLink</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="n">detailLink</span><span class="o">=</span><span class="n">activeLoan</span><span class="p">[</span><span class="s">&#39;detailLink&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">detailLink</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="n">completedLoan</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s">&#39;compDict&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">completedLoan</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">10</span><span class="p">)</span>
+    
+    <span class="n">detailLink</span><span class="o">=</span><span class="n">completedLoan</span><span class="p">[</span><span class="s">&#39;detailLink&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">detailLink</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+
+    <span class="n">resp2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/loanDetails/1/&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp2</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="SimpleTest.test_applications"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_applications">[docs]</a>  <span class="k">def</span> <span class="nf">test_applications</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID. The customer has applied for some loans.</span>
+<span class="sd">    Page Behaviour: Displays all the loan applications of a customer.</span>
+<span class="sd">    Test: Testing whether the routing and Archive and Cancel/Archive buttons has been configured properly. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/allApplications/&#39;</span><span class="p">)</span>
+   
+    <span class="n">applications</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;processedApplications&#39;</span><span class="p">,</span><span class="s">&#39;underProcessingApplications&#39;</span><span class="p">,</span><span class="s">&#39;archivedApplications&#39;</span><span class="p">]</span>   
+    
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numEntries</span><span class="p">(</span><span class="n">applications</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">resp</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numEntries</span><span class="p">(</span><span class="n">applications</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">resp</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numEntries</span><span class="p">(</span><span class="n">applications</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">resp</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">link</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">applications</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;archiveLink&#39;</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">,</span><span class="n">follow</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numEntries</span><span class="p">(</span><span class="n">applications</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">resp</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">link</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="n">applications</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;cancelLink&#39;</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">,</span><span class="n">follow</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numEntries</span><span class="p">(</span><span class="n">applications</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">resp</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numEntries</span><span class="p">(</span><span class="n">applications</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">resp</span><span class="p">),</span><span class="mi">3</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SimpleTest.test_allPayments"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_allPayments">[docs]</a>  <span class="k">def</span> <span class="nf">test_allPayments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID.</span>
+<span class="sd">    Page Behaviour: Displays all the payments made by the customer.</span>
+<span class="sd">    Test: Testing whether the routing has been configured properly</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/allPayments/&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SimpleTest.test_payInstallment"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_payInstallment">[docs]</a>  <span class="k">def</span> <span class="nf">test_payInstallment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID. The customer has an active loan.</span>
+<span class="sd">    Page Behaviour: Displays the installment information.</span>
+<span class="sd">    Test: Testing whether the routing has been configured and the database is updated properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">activeLoan</span><span class="o">=</span><span class="n">ActiveLoan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">oldLoanBalance</span><span class="o">=</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;/payInstallment/2/&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">302</span><span class="p">)</span>
+    <span class="n">activeLoan</span><span class="o">=</span><span class="n">ActiveLoan</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">newLoanBalance</span><span class="o">=</span><span class="n">activeLoan</span><span class="o">.</span><span class="n">outstandingLoanBalance</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">newLoanBalance</span><span class="o">&lt;</span><span class="n">oldLoanBalance</span><span class="p">)</span>
+  </div>
+<div class="viewcode-block" id="SimpleTest.test_payPrepayment"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_payPrepayment">[docs]</a>  <span class="k">def</span> <span class="nf">test_payPrepayment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID.</span>
+<span class="sd">    Page Behaviour: Displays the form to enter prepayment amount.</span>
+<span class="sd">    Test: Testing whether the routing has been configured properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/payPrepayment/2/&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SimpleTest.test_support"><a class="viewcode-back" href="../../loans.html#loans.tests.SimpleTest.test_support">[docs]</a>  <span class="k">def</span> <span class="nf">test_support</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Precondition: The user is logged in and has a valid customer ID.</span>
+<span class="sd">    Page Behaviour: Displays a form to file a support request.</span>
+<span class="sd">    Test: Testing whether the routing has been configured properly</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;/support/&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">LoansProject 0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Anuj Jain, Divya Sharma, Ishan Chhabra, Rohit Agarwal, Shikhar Srivastav.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
